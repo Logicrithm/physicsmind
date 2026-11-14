@@ -1,0 +1,32 @@
+# Python environment and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Secrets: API keys live only in .env on this computer
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets*
+.streamlit/secrets.toml
+
+# Personal data: saved questions, answers and feedback
+physicsmind.db
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Editor, OS and assistant tool settings
+.claude/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
