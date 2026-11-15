@@ -52,7 +52,12 @@
 - Checked in the running app after the online preparation: version label and privacy note shown, a real Groq answer
   with its maths rendered (21 formulas, none left raw), the solver starter still 20.41 m, and the real feedback file
   still holding its 2 rows (backup: physicsmind.db.backup-2026-11-15).
-- Not yet checked: the Supabase table and the deployed site itself; those need the accounts in DEPLOY.md.
+- **Live since 15 Nov 2026 at https://physicsmind.streamlit.app** (version 0.2.1). Checked on the live site: the
+  solver (22.96 m for 30 m/s at 45°), a Groq answer, feedback saved to Supabase, the sidebar closed on a 375 px
+  phone screen with the chat box tappable, no sideways scrolling. The Supabase publishable key was tested: it can add
+  feedback but cannot read, change or delete it, and the table refuses bad ratings and oversized text.
+- Not verified on the live site: the hidden error details (no safe way to cause an error there; the setting is
+  tested in tests/test_app.py).
 
 ## Limitations
 - The checked solver answers only maximum-height questions for one object in free flight. Time of flight, range,
