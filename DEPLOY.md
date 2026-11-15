@@ -30,8 +30,17 @@ the dashboard and press **Restore** before sharing the link again. While a proje
 the tester their feedback wasn't saved instead of losing it silently.
 
 ### 3. Groq key (more free AI answers)
-Sign in at https://console.groq.com, open **API Keys**, then **Create API Key**. No card is needed. Your existing
-OpenRouter key stays as the second choice.
+Sign in at https://console.groq.com, open **API Keys**, then **Create API Key** and name it `PhysicsMind`.
+No card is needed. Use a new key, not one that belongs to another project: then either app's key can be revoked without breaking
+the other, and the Groq dashboard shows which app made which requests. Paste it after `GROQ_API_KEY=` in this
+folder's `.env` for local use, and into the Secrets page below for the online app. Your existing OpenRouter key
+stays as the second choice.
+
+Groq's free limits apply to the whole Groq account, not to each key, so if both keys are in the same account,
+the apps share the same 1,000 answers a day.
+
+PhysicsMind ignores a `GROQ_API_KEY` set in Windows (for example one that belongs to another project), so it is never
+used here even though it is set on this computer.
 
 ### 4. Streamlit Community Cloud
 1. Sign in at https://share.streamlit.io with GitHub and allow it to see the `physicsmind` repository.

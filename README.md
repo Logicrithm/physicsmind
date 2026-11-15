@@ -35,7 +35,8 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 1. Create a free key at https://console.groq.com/keys (about 1,000 answers a day) and/or
    https://openrouter.ai/keys (50 a day).
 2. Copy `.env.example` to `.env` and add the key(s) after `GROQ_API_KEY=` / `OPENROUTER_API_KEY=`.
-   A `GROQ_API_KEY` set as a Windows environment variable is also picked up.
+   Only keys in this folder's `.env` are used: a key set in Windows for another project is
+   deliberately ignored.
 3. Restart Streamlit.
 
 No paid fallback is configured. Free-model availability and quotas can change.

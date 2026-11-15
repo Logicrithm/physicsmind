@@ -3,10 +3,11 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from physicsmind.answer import make_answer
-from physicsmind.config import whole_number
+from physicsmind.config import use_only_own_keys, whole_number
 from physicsmind.feedback import FeedbackNotSaved, choose_store
 from physicsmind.version import app_version
 
+use_only_own_keys()  # a Groq key set in Windows for another project must not be used here
 load_dotenv(override=True)
 store = choose_store()  # Supabase when SUPABASE_URL and SUPABASE_KEY are set, else physicsmind.db on this computer
 VERSION = app_version()
