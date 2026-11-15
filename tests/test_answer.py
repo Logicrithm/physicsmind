@@ -77,7 +77,7 @@ def test_without_an_ai_key_the_reply_says_so():
 def test_when_the_free_ai_is_used_up_the_reply_says_so_plainly():
     answer = make_answer("Why is the sky blue?", FakeTutor((None, None, LIMIT_REACHED)))
     assert answer.response_type == AI_UNAVAILABLE and answer.used_ai
-    assert "used up its answers" in answer.text and "maximum-height questions still work" in answer.text
+    assert "used up its answers" in answer.text and "Checked projectile questions" in answer.text
     assert "429" not in answer.text and "Error" not in answer.text
 
 

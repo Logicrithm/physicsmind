@@ -1,10 +1,11 @@
 """Reads a typed physics question into checked quantities before any number is calculated.
 
-Scope today: the maximum height of an object launched freely under constant gravity, straight up or at an
-angle, from the ground or from a raised point. The reader returns one of three verdicts:
+Scope today: one object launched freely under constant gravity, straight up, at an angle, or horizontally from a
+raised point, landing on the ground. It can be asked for the maximum height, the time to reach the top, the time
+of flight and the horizontal range, or several of these at once. The reader returns one of three verdicts:
 
-- "solvable": every quantity was understood, each has a clear role, and the formula applies.
-- "unclear": it is a maximum-height question, but something is missing, ambiguous or contradictory.
+- "solvable": every quantity was understood, each has a clear role, and the formulas apply.
+- "unclear": it is one of these questions, but something is missing, ambiguous or contradictory.
   The reader says exactly what it needs. It never guesses a number, because a wrong number presented
   as checked is worse than no number.
 - "not_mine": another kind of question, or a situation the formula does not cover (air resistance,
@@ -19,6 +20,11 @@ import math
 import re
 
 SOLVABLE, UNCLEAR, NOT_MINE = "solvable", "unclear", "not_mine"
+# What can be asked, in the order answers are given.
+HEIGHT, T_TOP, T_FLIGHT, RANGE = "height", "t_top", "t_flight", "range"
+ASKABLE = (HEIGHT, T_TOP, T_FLIGHT, RANGE)
+ASK_NAMES = {HEIGHT: "the maximum height", T_TOP: "the time to reach the top", T_FLIGHT: "the time of flight",
+             RANGE: "the horizontal range"}
 EARTH_G = 9.8
 SPEED_OF_LIGHT = 299_792_458.0
 STANDARD_G = (9.8, 9.81, 9.807, 10.0)
@@ -40,7 +46,8 @@ class Quantity:
 @dataclass
 class Reading:
     status: str
-    on_topic: bool = False                # the question asks for a maximum height
+    on_topic: bool = False                # the question asks for something the solver covers (or gives a maximum height)
+    asks: list[str] = field(default_factory=list)         # HEIGHT, T_TOP, T_FLIGHT and/or RANGE, in ASKABLE order
     reasons: list[str] = field(default_factory=list)      # why it is unclear or not handled
     understood: list[str] = field(default_factory=list)   # what was read, in the student's words
     assumptions: list[str] = field(default_factory=list)
@@ -51,6 +58,7 @@ class Reading:
     angle_from: str = ""                  # "horizontal" or "vertical"
     angle_written: str = ""
     straight_up: bool = False             # the question itself says it goes straight up
+    horizontal_launch: bool = False       # thrown horizontally: no upward speed at all
     g: float = EARTH_G
     g_written: str = ""
     launch_height: float = 0.0
@@ -185,6 +193,51 @@ HEIGHT_PHRASE = re.compile(r"\b(?:max(?:imum)?\.?|greatest|highest|peak)\s+(?:ve
 # "From a height of 20 m" is a starting point, not this.
 HEIGHT_GIVEN = re.compile(r"(?:max(?:imum)?\.?|greatest|peak)\s+(?:vertical\s+)?height\s*(?:reached\s+|attained\s+)?(?:of|is|=|was|will be)\s*(?:about\s+)?-?\d"
                           r"|highest point\s*(?:is|=|of|was)\s*-?\d|\brises? to (?:a height of )?-?\d")
+
+# The other quantities the solver answers, added 15 Nov 2026. A phrase is removed from the sentence once matched, so
+# "the time to reach the maximum height" is a time question, not also a height question.
+_TOP = (r"(?:its |the )?(?:max(?:imum)?\.? (?:height|point)|greatest height|highest (?:point|position)"
+        r"|top(?: of (?:its|the) (?:path|flight|trajectory|motion))?|peak)\b")
+_REACH_TOP = (r"(?:reach(?:es|ing)?|gets? to|getting to|rises? to|rising to|attains?|attaining|arrives? at|goes up to|go up to)"
+              rf"\s+{_TOP}")
+_UNTIL = r"(?:(?:to|until|till|before|for)\s+(?:it\s+|the\s+\w+\s+)?(?:to\s+)?)"
+_GROUND = r"(?:the\s+)?(?:ground|floor|earth|sea|water|river|beach|road|street|surface)\b(?:\s+(?:below|level))?"
+_LAND = (rf"(?:(?:hits?|hitting|strikes?|striking|reach(?:es|ing)?|gets? (?:back )?to|lands? (?:on|in|at)|"
+         rf"falls? (?:back )?(?:down )?(?:to|on|onto|into)|comes? (?:back )?down (?:to|on)|returns? to|touch(?:es)?)\s+{_GROUND}"
+         r"|lands?\b|landing\b|touches down\b|comes? (?:back )?down\b)")
+_BACK = r"(?:return\w*|comes? back|coming back|gets? back|fall\w* back)\b"
+_NOT_GIVEN = r"(?!\s*(?:is|=|was|of|equals)\s*-?\d)"  # "the time of flight is 4 s" gives a time; it doesn't ask for one
+ASK_PATTERNS = {
+    T_TOP: re.compile(rf"(?:\btime (?:of|for) (?:ascent|rise|rising|going up)\b|\btime to (?:the )?top\b"
+                      rf"|\b(?:time|how long)\b[^.?!;]{{0,30}}?\b{_UNTIL}?{_REACH_TOP}"
+                      rf"|\bwhen (?:does|will|would|did) (?:it|the \w+) {_REACH_TOP}){_NOT_GIVEN}"),
+    T_FLIGHT: re.compile(rf"(?:\b(?:total )?time of flight\b|\bflight time\b"
+                         r"|\btotal time\b(?: (?:taken|of (?:motion|flight)|(?:it )?(?:spends|spent|stays|is) in the air))?"
+                         r"|\btime (?:it (?:spends|stays|remains|is) |spent |that it (?:spends|is) )?(?:in the air|in flight|airborne|aloft)\b"
+                         r"|\bhow long\b[^.?!;]{0,40}?\b(?:in the air|in flight|airborne|aloft)\b"
+                         rf"|\b(?:time|how long)\b[^.?!;]{{0,30}}?\b{_UNTIL}?(?:{_LAND}|{_BACK})"
+                         rf"|\bwhen (?:does|will|would|did) (?:it|the \w+) {_LAND}){_NOT_GIVEN}"),
+    RANGE: re.compile(r"(?:\b(?:horizontal )?range\b(?! of (?:speeds|values|angles|numbers))"
+                      r"|\bhorizontal distance\b(?: (?:travelled|traveled|covered|moved|gone))?"
+                      r"|\bdistance (?:travelled |traveled |covered |moved )?horizontally\b"
+                      rf"|\bhow far\b(?!\s+(?:up|above|below|down|high))[^.?!;]{{0,50}}?\b(?:horizontally|away|{_LAND})"
+                      r"|\bhow far (?:does|will|would|did) (?:it|the \w+) (?:go|travel)\b(?!\s+(?:up|down|vertically))"
+                      r"|\bdistance (?:from|away from) (?:the )?(?:base|foot|bottom|edge)\b"
+                      r"|\bwhere (?:does|will|would|did) (?:it|the \w+) land\b)"
+                      # "The horizontal distance at that moment" (at the top, after 2 s...) is not where it lands.
+                      r"(?![^.?!;]{0,40}\b(?:at (?:that|this|the same) (?:moment|time|instant|point)"
+                      r"|at the (?:top|highest point|maximum height|peak)|when it (?:is at|reaches|gets to)|after \d|in \d|by the time))"),
+}
+# "Find the maximum height and the time taken to reach it": "it" is the height named in the same sentence.
+TOP_TIME_OF_IT = re.compile(r"\b(?:time|how long)\b[^.?!;]{0,30}?\b(?:to|until|before)\s+(?:it\s+)?reach(?:es)?\s+"
+                            r"(?:it|there|this point|that point|that height|this height)\b")
+# Back to where it started, not down to the ground: the same thing only when it starts from the ground.
+BACK_TO_START = re.compile(rf"\b{_BACK}(?!\s+(?:down\s+)?(?:to|on|onto)\s+{_GROUND})")
+# Asks the solver can't answer yet. These are looked for first, because "the maximum range" also contains "range".
+OTHER_ASKS_FIRST = {
+    "the greatest possible range (which needs the best angle first)":
+        re.compile(r"\b(?:maximum|max\.?|greatest|largest|longest|biggest) (?:possible )?(?:horizontal )?range\b"),
+}
 OTHER_ASKS = {
     "a time": re.compile(r"\bhow long\b|\b(?:find|calculate|determine|compute|what is|and)\s+(?:the\s+|its\s+)?(?:total\s+)?(?:time|duration)\b"
                          r"|\btime (?:taken|of flight|required|needed)\b(?!\s*(?:is|=|was|of)\s*\d)"),
@@ -212,6 +265,11 @@ OUTSIDE = [  # situations this formula does not describe, with the reason given 
     (re.compile(r"\b(?:rolls?|rolling|slides?|sliding|friction)\b"), "it rolls or slides, so it is not in free flight"),
     (re.compile(r"\b(?:to clear|just clear|clears|clearing|over (?:a|the) (?:wall|fence|net|hurdle|tree)|hits? (?:a|the) (?:wall|target))\b"),
      "it has to clear or hit an obstacle, which needs more than the maximum height"),
+    (re.compile(r"\b(?:lands?|landing|falls?|hits?|strikes?)\s+(?:on|onto|at|in|into)\s+(?:(?:a|an|the|another|its|top of)\s+)*"
+                r"(?:(?!of\b)\w+\s+){0,2}?(?:roof|rooftop|platform|hill|building|wall|table|ledge|cliff|balcony|tower|tree|shelf"
+                r"|step|terrace|window|truck|lorry|car|basket|hoop|bucket|box)\b"
+                r"|\blands?\b[^.;]{0,40}\b(?:above|below|higher than|lower than)\s+(?:the |its )?(?:launch|starting|initial|point of)"),
+     "it lands at a different level (on a roof, a table, a hill...), which the checked solver doesn't handle yet"),
     (re.compile(r"\b(?:two|both|another|each other|relative|second (?:ball|stone|object|body|particle|car|one)|\d+\s+(?:balls|stones|objects|bodies|particles|cars))\b"),
      "more than one object is involved"),
 ]
@@ -221,7 +279,10 @@ OTHER_WORLD = re.compile(r"\b(?:moon|mars|jupiter|venus|mercury|saturn|uranus|ne
 UP = re.compile(r"\b(?:vertically upwards?|vertically up|straight up(?:wards?)?|upwards?|up into the air|thrown up|throws? (?:\w+ ){0,2}up"
                 r"|projected up|launched up|kicked up|tossed up|shot up|fired up|goes up|moving up)\b")
 DOWN = re.compile(r"\b(?:downwards?|vertically down|straight down|dropped|drops|released from rest|let go|falls? from|thrown down)\b")
-SIDEWAYS = re.compile(r"\bhorizontally\b")
+# Thrown horizontally. Only next to a launch word: "how far does it travel horizontally?" asks for the range instead.
+SIDEWAYS = re.compile(r"\b(?:throws?|thrown|threw|projected|launched|fired|kicked|hit|shot|tossed|flung|struck|released|leaves?"
+                      r"|left|directed|aimed|point(?:s|ed|ing)|jumps?|jumped|runs? off|ran off|driven)\b[^.;?]{0,40}?\bhorizontally\b"
+                      r"|\bhorizontally (?:with|at)\b")
 AT_ANGLE = re.compile(r"\b(?:at an angle|angle of projection|angle of elevation|obliquely|at some angle)\b")
 VERTICAL_WORD = re.compile(r"\bvertically\b|\bstraight up\b")
 
@@ -235,14 +296,30 @@ RAISED_START = re.compile(r"\b(?:from|off)\s+(?:a|an|the|its|some)\s+(?:\w+\s+){
 TOP_TIME = re.compile(r"\b(?:reach\w*|gets? to|arriv\w* at|at)\s+(?:its |the )?(?:maximum height|max\.? height|highest point|top|peak)\b")
 
 
-def _asked(text: str) -> tuple[bool, list[str], bool]:
-    """Whether a maximum height is asked for, what else is asked, and whether a height is given instead."""
+def _asked(text: str) -> tuple[list[str], list[str], bool]:
+    """What the solver can answer that is asked for, what else is asked, and whether a maximum height is given instead."""
     sentences = [s for s in re.split(r"(?<=[.?!;])\s+", text) if s]
     asking = [s for s in sentences if ASK.search(s)] or sentences
     height_given = any(HEIGHT_GIVEN.search(s) for s in sentences)
-    height = any(HEIGHT_PHRASE.search(HEIGHT_GIVEN.sub(" ", s)) for s in asking)
-    others = [name for name, pattern in OTHER_ASKS.items() if any(pattern.search(s) for s in asking)]
-    return height, others, height_given
+    asks, others = set(), []
+    for sentence in asking:
+        rest = HEIGHT_GIVEN.sub(" ", sentence)
+        for name, pattern in OTHER_ASKS_FIRST.items():
+            if pattern.search(rest):
+                others.append(name)
+                rest = pattern.sub(" ", rest)
+        names_height = bool(HEIGHT_PHRASE.search(rest))
+        for name, pattern in ASK_PATTERNS.items():
+            if pattern.search(rest):
+                asks.add(name)
+                rest = pattern.sub(" ", rest)
+        if names_height and TOP_TIME_OF_IT.search(rest):
+            asks.add(T_TOP)
+            rest = TOP_TIME_OF_IT.sub(" ", rest)
+        if HEIGHT_PHRASE.search(rest):
+            asks.add(HEIGHT)
+        others += [name for name, pattern in OTHER_ASKS.items() if pattern.search(rest)]
+    return [name for name in ASKABLE if name in asks], list(dict.fromkeys(others)), height_given
 
 
 def _show(value: float) -> str:
@@ -270,16 +347,22 @@ def _converted(q: Quantity) -> str:
 
 def read_question(question: str) -> Reading:
     text = normalise(question)
-    height_asked, other_asks, height_given = _asked(text)
-    if not height_asked:
-        reason = ("it gives a maximum height and asks for something else" if height_given
-                  else "it is not a maximum-height question")
+    asks, other_asks, height_given = _asked(text)
+    if not asks:
+        if height_given:
+            reason = "it gives a maximum height and asks for something else"
+        elif other_asks:
+            reason = f"it asks for {', '.join(other_asks)}"
+        else:
+            reason = "it isn't a question about the maximum height, time of flight or range of a launched object"
         return Reading(NOT_MINE, on_topic=height_given, reasons=[reason])
     if other_asks:
-        return Reading(NOT_MINE, on_topic=True,
-                       reasons=[f"it also asks for {', '.join(other_asks)}, and the checked solver only answers the maximum height so far"])
+        return Reading(NOT_MINE, on_topic=True, asks=asks,
+                       reasons=[f"it also asks for {', '.join(other_asks)}, and the checked solver only answers the maximum "
+                                f"height, the time to the top, the time of flight and the range so far"])
 
-    reading = Reading(SOLVABLE, on_topic=True)
+    reading = Reading(SOLVABLE, on_topic=True, asks=asks)
+    flies = T_FLIGHT in asks or RANGE in asks   # it has to come down, not only go up
     reading.air_resistance_neglected = bool(AIR_NEGLECTED.search(text))
     for pattern, reason in OUTSIDE:
         if reading.air_resistance_neglected and "air resistance" in reason:
@@ -333,7 +416,9 @@ def read_question(question: str) -> Reading:
             vertical.append(q)
         elif q.label == "ux" or re.search(r"horizontal (?:component|part|velocity|speed)\b[^.,;]{0,40}$", before):
             unclear.append(f"{q.written} is the horizontal part of the velocity. I need the launch speed, or its vertical part.")
-        elif q.label == "v" or re.search(r"\b(?:final|landing|impact|lands|hits|on reaching|at the (?:top|highest point)|returns?)\b[^.,;]{0,25}$", before):
+        # "Hits the ground at 30 m/s" is a landing speed; "hits a golf ball at 20 m/s" is the launch (fixed 15 Nov 2026, E21).
+        elif q.label == "v" or re.search(r"\b(?:final|landing|impact|lands|on reaching|at the (?:top|highest point)|returns?"
+                                         r"|hits (?:the )?(?:ground|floor|water|earth))\b[^.,;]{0,25}$", before):
             stray.append(q)
         elif re.search(r"vertical (?:component|part|velocity|speed)\b[^.,;]{0,40}$", before):
             vertical.append(q)  # "vertical velocity" added 15 Nov 2026 (evaluation set); checked after "at the top" etc.
@@ -380,6 +465,8 @@ def read_question(question: str) -> Reading:
                                    "If your book uses 9.81 or 10, include it in the question.")
 
     # Angle and direction.
+    thrown_down = "it is thrown or dropped downward, and the checked solver only handles upward and horizontal launches so far"
+    upright = False  # an angle that means straight up
     if len(angles) > 1:
         unclear.append(f"Your question gives more than one angle ({', '.join(q.written for q in angles)}).")
     elif angles:
@@ -388,6 +475,9 @@ def read_question(question: str) -> Reading:
         nearby = before[-35:] + " " + after[:45]
         reading.angle, reading.angle_written = q.value, _converted(q)
         if re.search(r"\bbelow\s+(?:the\s+)?(?:horizontal|horizon)\b|\bdepression\b", nearby):
+            if flies:
+                reading.status, reading.reasons = NOT_MINE, [thrown_down]
+                return reading
             unclear.append(f"It is launched {q.written} below the horizontal, so it never rises above its starting point.")
         elif re.search(r"\b(?:with|to|from|off)\s+(?:the\s+)?vertical\b", nearby):
             reading.angle_from = "vertical"
@@ -404,20 +494,33 @@ def read_question(question: str) -> Reading:
             unclear.append(f"An angle of {_show(degrees)}° from the vertical doesn't describe an upward launch. "
                            f"Please give an angle between 0° and 90°.")
         effective = degrees if reading.angle_from == "horizontal" else 90 - degrees
-        if VERTICAL_WORD.search(text) and abs(effective - 90) > 1e-9:
+        upright = abs(effective - 90) < 1e-9
+        if VERTICAL_WORD.search(text) and not upright:
             unclear.append(f"It says “vertically” but also gives an angle of {_converted(q)}. Which is it?")
         if DOWN.search(text) and not UP.search(text):
+            if flies:
+                reading.status, reading.reasons = NOT_MINE, [thrown_down]
+                return reading
             unclear.append(f"It is thrown downward at {_converted(q)}, so it never rises above where it starts. Did you mean upward?")
     elif reading.vertical_speed is not None:
         if DOWN.search(text) and not UP.search(text):
+            if flies:
+                reading.status, reading.reasons = NOT_MINE, [thrown_down]
+                return reading
             unclear.append("It is thrown downward, so it never rises above where it starts. Did you mean upward?")
     else:
         down, up = DOWN.search(text), UP.search(text)
         if down and not up:
+            if flies:
+                reading.status, reading.reasons = NOT_MINE, [thrown_down]
+                return reading
             unclear.append("It is dropped or thrown downward, so it never rises above where it starts. "
                            "Did you mean thrown upward?")
         elif SIDEWAYS.search(text) and not up:
-            unclear.append("Thrown horizontally, it never rises above where it starts. Did you mean at an angle above the horizontal?")
+            reading.horizontal_launch = True
+            if HEIGHT in asks or T_TOP in asks:
+                unclear.append("Thrown horizontally, it never rises above where it starts, so there is no maximum height "
+                               "(or time to reach it) above that point. Did you mean at an angle above the horizontal?")
         elif AT_ANGLE.search(text):
             unclear.append("It is launched at an angle, but the angle isn't given. Please include it, e.g. “at 30° above the horizontal”.")
         elif up:
@@ -452,9 +555,30 @@ def read_question(question: str) -> Reading:
         else:
             unclear.append(f"I can't tell what the time {q.written} measures. Only the time to reach the top fits this question.")
 
-    if not reading.launch_height_written and RAISED_START.search(text) and not re.search(r"\bfrom (?:the )?(?:ground|floor)\b", text):
+    raised_unknown = (not reading.launch_height_written and RAISED_START.search(text)
+                      and not re.search(r"\bfrom (?:the )?(?:ground|floor)\b", text))
+    if raised_unknown:
         unclear.append("It starts from a raised point, but its height isn't given. How high above the ground is it "
-                       "launched from? (Or, if you only want the rise above the launch point, say so.)")
+                       "launched from?" + ("" if flies else " (Or, if you only want the rise above the launch point, say so.)"))
+    elif reading.horizontal_launch and reading.launch_height <= 0:
+        unclear.append("Thrown horizontally, it starts falling straight away, so I need the height it is thrown from. "
+                       "How high above the ground is it?")
+
+    # What coming down means (added 15 Nov 2026 with the time of flight and the range).
+    if RANGE in asks:
+        if reading.straight_up or upright:
+            unclear.append("Thrown straight up, it only goes up and down and comes back where it started, so it has no "
+                           "horizontal range. Did you mean thrown at an angle? If so, please give the angle.")
+        elif reading.speed is None and (reading.vertical_speed is not None or reading.time_to_top is not None):
+            unclear.append("For the range I also need the sideways part of the launch speed. Please give the launch "
+                           "speed and its angle.")
+    if T_FLIGHT in asks and reading.launch_height > 0 and BACK_TO_START.search(text):
+        unclear.append(f"It starts {reading.launch_height_written} above the ground. Do you want the time until it is back "
+                       f"at that height, or until it reaches the ground?")
+    if flies:
+        reading.assumptions.append(f"It lands on the ground, {reading.launch_height_written} below where it was launched."
+                                   if reading.launch_height > 0 else
+                                   "It lands back at the height it was launched from (level ground).")
 
     if reading.speed is None and reading.vertical_speed is None and reading.time_to_top is None and not unclear:
         unclear.append("I couldn't find the launch speed. Please give it with its unit, e.g. “20 m/s”. "
@@ -474,11 +598,26 @@ def vertical_launch_speed(reading: Reading) -> float | None:
         return reading.vertical_speed.value
     if reading.speed is None:
         return None
+    if reading.horizontal_launch:
+        return 0.0
     if reading.angle is None:
         return reading.speed.value
     if reading.angle_from == "vertical":
         return reading.speed.value * math.cos(reading.angle)
     return reading.speed.value * math.sin(reading.angle)
+
+
+def horizontal_launch_speed(reading: Reading) -> float | None:
+    """The sideways part of the launch speed. None when the question doesn't give it (only the vertical part or a time)."""
+    if reading.speed is None:
+        return None
+    if reading.horizontal_launch:
+        return reading.speed.value
+    if reading.angle is None:
+        return 0.0 if reading.straight_up else None
+    if reading.angle_from == "vertical":
+        return reading.speed.value * math.sin(reading.angle)
+    return reading.speed.value * math.cos(reading.angle)
 
 
 def _check_time_agrees(reading: Reading, unclear: list[str]) -> None:
@@ -492,6 +631,9 @@ def _check_time_agrees(reading: Reading, unclear: list[str]) -> None:
 
 def _describe(reading: Reading) -> None:
     """What was understood, in the student's own units, for the explanation and for a clarification."""
+    if reading.asks:
+        names = [ASK_NAMES[a] for a in reading.asks]
+        reading.understood.append("Asked for: " + (names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]))
     if reading.speed is not None:
         reading.understood.append(f"Launch speed: {_converted(reading.speed)}")
     if reading.vertical_speed is not None:
@@ -499,7 +641,8 @@ def _describe(reading: Reading) -> None:
     if reading.angle is not None:
         reading.understood.append(f"Direction: {reading.angle_written} from the {reading.angle_from or 'horizontal'}")
     elif reading.speed is not None:
-        reading.understood.append("Direction: straight up" if reading.straight_up else "Direction: not clear yet")
+        reading.understood.append("Direction: straight up" if reading.straight_up else
+                                  "Direction: horizontal" if reading.horizontal_launch else "Direction: not clear yet")
     if reading.time_to_top is not None:
         reading.understood.append(f"Time to reach the top: {_converted(reading.time_to_top)}")
     reading.understood.append(f"Gravity: g = {reading.g_written}" if reading.g_written else "Gravity: g = 9.8 m/s² (not given)")

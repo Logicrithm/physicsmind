@@ -25,15 +25,20 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from physicsmind.projectile import solve_max_height  # noqa: E402
+from physicsmind.projectile import solve_projectile  # noqa: E402
 from physicsmind.reader import NOT_MINE, SOLVABLE, UNCLEAR, read_question  # noqa: E402
 from physicsmind.version import app_version  # noqa: E402
 
 QUESTIONS = Path(__file__).resolve().parent / "questions.json"
-RELATIVE_TOLERANCE = 1e-3  # the solver's float must match the hand-worked height to 0.1 %
+RELATIVE_TOLERANCE = 1e-3  # the solver's float must match the hand-worked value to 0.1 %
 
 CORRECT, SAFE_MISS, DANGEROUS = "correct", "safe miss", "dangerous"
-CATEGORIES = ("straightforward", "units_and_angles", "ambiguous", "outside")
+CATEGORIES = ("straightforward", "units_and_angles", "flight_and_range", "ambiguous", "outside")
+# Expected key in questions.json -> (Solution field, how it is shown)
+VALUES = {"rise": ("rise", "rise {:.4g} m"), "above_ground": ("above_ground", "{:.4g} m above the ground"),
+          "t_top": ("time_to_top", "time to top {:.4g} s"), "t_flight": ("time_of_flight", "time of flight {:.4g} s"),
+          "range": ("range", "range {:.4g} m")}
+ASKED = {"height": ("rise", "above_ground"), "t_top": ("t_top",), "t_flight": ("t_flight",), "range": ("range",)}
 
 
 @dataclass
@@ -51,27 +56,45 @@ def _close(got, want) -> bool:
     return got is not None and abs(got - want) <= RELATIVE_TOLERANCE * max(1.0, abs(want))
 
 
+def _given(solution, asks) -> dict:
+    """The numbers the solver gave, under the same keys as questions.json."""
+    given = {}
+    for ask in asks:
+        for key in ASKED[ask]:
+            value = getattr(solution, VALUES[key][0])
+            if value is not None:
+                given[key] = value
+    return given
+
+
+def _show(values: dict) -> str:
+    return ", ".join(VALUES[key][1].format(value) for key, value in values.items())
+
+
 def score(item: dict) -> Result:
     reading = read_question(item["question"])
     status = reading.status
     reason = reading.reasons[0] if reading.reasons else ""
-    solution = solve_max_height(reading) if status == SOLVABLE else None
+    solution = solve_projectile(reading) if status == SOLVABLE else None
     gave_number = solution is not None and solution.ok
     if gave_number:
-        numbers = f"rise {solution.rise:.4g} m" + (f", {solution.above_ground:.4g} m above the ground"
-                                                    if solution.above_ground is not None else "")
+        gave = _given(solution, reading.asks)
+        numbers = _show(gave)
     expect = item["expect"]
     also_fine = set(item.get("also_fine", []))
 
     if expect == SOLVABLE:
         if gave_number:
-            right = _close(solution.rise, item["rise"])
-            if "above_ground" in item:
-                right = right and _close(solution.above_ground, item["above_ground"])
-            want = f"rise {item['rise']:.4g} m" + (f", {item['above_ground']:.4g} m above the ground"
-                                                    if "above_ground" in item else "")
-            return Result(item, CORRECT if right else DANGEROUS,
-                          f"answered {numbers}" if right else f"WRONG NUMBER: gave {numbers}, expected {want}")
+            want = {key: item[key] for key in VALUES if key in item}
+            unasked = sorted(set(gave) - set(want))
+            if unasked:
+                return Result(item, DANGEROUS, f"GAVE A NUMBER NOT ASKED FOR: {numbers}; expected {_show(want)}")
+            missing = sorted(set(want) - set(gave))
+            if any(not _close(gave[key], want[key]) for key in want if key in gave):
+                return Result(item, DANGEROUS, f"WRONG NUMBER: gave {numbers}, expected {_show(want)}")
+            if missing:
+                return Result(item, SAFE_MISS, f"answered only part: gave {numbers}, expected {_show(want)}")
+            return Result(item, CORRECT, f"answered {numbers}")
         if status == SOLVABLE:
             return Result(item, SAFE_MISS, f"understood it but could not check the result: {solution.problem}")
         if status == UNCLEAR:

@@ -112,5 +112,6 @@ def test_the_score_shown_to_testers_matches_the_evaluation():
     # The panel must not claim a better score than the evaluation set gives.
     from evals.run_eval import CORRECT, run
     from physicsmind.about import ABOUT
-    correct = sum(r.kind == CORRECT for r in run())
-    assert f"**{correct} / 100**" in ABOUT
+    results = run()
+    correct = sum(r.kind == CORRECT for r in results)
+    assert f"**{correct} / {len(results)}**" in ABOUT

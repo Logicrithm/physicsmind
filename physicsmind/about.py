@@ -6,13 +6,16 @@ TITLE = "ℹ️ What PhysicsMind can do, what's coming, and how you can help"
 ABOUT = """
 **✅ Checked answers (worked out by code and double-checked)**
 
-- **Maximum height** of a thrown or launched object: straight up or at an angle, from the ground or from a raised
-  point such as a building or cliff.
+- For a thrown or launched object: the **maximum height**, the **time to reach the top**, the **total time in the
+  air** and the **horizontal range**, or several of these in one question.
+- Straight up, at an angle, or horizontally from a height; from the ground or from a raised point such as a
+  building or cliff, landing on the ground.
 - Understands units and converts them: m/s, km/h, cm/s, mph, ft/s, km/s; degrees, radians and π/4; heights in m,
   cm or km; your own value of g (9.8, 9.81, 10, or the Moon's if you give it).
 - Shows every step, the formula, and anything it assumed.
 - **If your question is unclear or missing something, it asks you instead of guessing.**
-- Test score: **100 / 100** on our 100-question test set (96 on its first, blind try; the 4 misses were fixed).
+- Test score: **140 / 140** on our 140-question test set. On their first, blind tries it scored 96 / 100 on the
+  first questions and 39 / 40 on the newer time-and-range ones; every miss was fixed.
 
 **🤖 Everything else: the AI tutor (not checked)**
 
@@ -21,8 +24,8 @@ ABOUT = """
 
 **🛠️ Being worked on next**
 
-- Time to reach the top, total time in the air, and horizontal range
-- Questions that ask for several things at once
+- Throws downward and objects that are dropped
+- Landing somewhere higher or lower than the ground (a roof, a table)
 - Answering its follow-up question without typing the whole problem again
 - Straight-line motion with constant acceleration
 - Numbers written in words ("twenty")

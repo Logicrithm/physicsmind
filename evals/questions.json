@@ -1,5 +1,5 @@
 {
- "about": "PhysicsMind evaluation set, written 15 Nov 2026 before PhysicsMind was run on any of it. Givens were converted to SI by hand; expected heights come from h = u_y^2 / 2g with u_y = u sin(angle from the horizontal), the given vertical speed, or g times the time to the top. Angles are degrees from the horizontal (90 = straight up). g is 9.8 m/s^2 unless given.",
+ "about": "PhysicsMind evaluation set. The first 100 were written 15 Nov 2026 before PhysicsMind was run on any of them; the 40 on time to the top, time of flight and range (flight_and_range E01-E26, ambiguous C21-C30, outside D21-D24) were added later that day, also before the solver could answer them. D01, D02, D03 and D20 moved from outside to flight_and_range. Each solvable item lists what it asks for (asks). It lands on the ground, h0 below the launch point; t_top = u_y/g, t_flight = (u_y + sqrt(u_y^2 + 2 g h0))/g, range = u_x t_flight with u_x = u cos(angle). Givens were converted to SI by hand; expected heights come from h = u_y^2 / 2g with u_y = u sin(angle from the horizontal), the given vertical speed, or g times the time to the top. Angles are degrees from the horizontal (90 = straight up). g is 9.8 m/s^2 unless given.",
  "items": [
   {
    "id": "A01",
@@ -10,6 +10,9 @@
     "u": 19.6,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 19.6
   },
   {
@@ -21,6 +24,9 @@
     "u": 49,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 122.5
   },
   {
@@ -32,6 +38,9 @@
     "u": 15,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 11.479592
   },
   {
@@ -43,6 +52,9 @@
     "u": 12,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 7.346939
   },
   {
@@ -54,6 +66,9 @@
     "u": 40,
     "angle": 30
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -65,6 +80,9 @@
     "u": 25,
     "angle": 60
    },
+   "asks": [
+    "height"
+   ],
    "rise": 23.915816
   },
   {
@@ -77,6 +95,9 @@
     "angle": 90,
     "g": 10
    },
+   "asks": [
+    "height"
+   ],
    "rise": 5.0
   },
   {
@@ -89,6 +110,9 @@
     "angle": 90,
     "g": 9.81
    },
+   "asks": [
+    "height"
+   ],
    "rise": 127.420999
   },
   {
@@ -100,6 +124,9 @@
     "u": 100,
     "angle": 45
    },
+   "asks": [
+    "height"
+   ],
    "rise": 255.102041
   },
   {
@@ -111,6 +138,9 @@
     "u": 20,
     "angle": 30
    },
+   "asks": [
+    "height"
+   ],
    "rise": 5.102041
   },
   {
@@ -122,6 +152,9 @@
     "u": 8,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 3.265306
   },
   {
@@ -134,6 +167,9 @@
     "angle": 90,
     "g": 10
    },
+   "asks": [
+    "height"
+   ],
    "rise": 45.0
   },
   {
@@ -146,6 +182,9 @@
     "angle": 37,
     "g": 10
    },
+   "asks": [
+    "height"
+   ],
    "rise": 45.272665
   },
   {
@@ -157,6 +196,9 @@
     "u": 24.5,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 30.625
   },
   {
@@ -168,6 +210,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -179,6 +224,9 @@
     "u": 45,
     "angle": 40
    },
+   "asks": [
+    "height"
+   ],
    "rise": 42.687817
   },
   {
@@ -190,6 +238,9 @@
     "u": 15,
     "angle": 50
    },
+   "asks": [
+    "height"
+   ],
    "rise": 6.736501
   },
   {
@@ -201,6 +252,9 @@
     "u": 6,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 1.836735
   },
   {
@@ -212,6 +266,9 @@
     "u": 4.9,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 1.225
   },
   {
@@ -224,6 +281,9 @@
     "angle": 60,
     "g": 10
    },
+   "asks": [
+    "height"
+   ],
    "rise": 135.0
   },
   {
@@ -235,6 +295,9 @@
     "u": 14,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 10.0
   },
   {
@@ -246,6 +309,9 @@
     "u": 28,
     "angle": 35
    },
+   "asks": [
+    "height"
+   ],
    "rise": 13.159597
   },
   {
@@ -258,6 +324,9 @@
     "angle": 90,
     "h0": 40
    },
+   "asks": [
+    "height"
+   ],
    "rise": 31.887755,
    "above_ground": 71.887755
   },
@@ -271,6 +340,9 @@
     "angle": 90,
     "h0": 12
    },
+   "asks": [
+    "height"
+   ],
    "rise": 16.530612,
    "above_ground": 28.530612
   },
@@ -284,6 +356,9 @@
     "angle": 30,
     "h0": 20
    },
+   "asks": [
+    "height"
+   ],
    "rise": 11.479592,
    "above_ground": 31.479592
   },
@@ -296,6 +371,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -306,6 +384,9 @@
    "given": {
     "uy": 16
    },
+   "asks": [
+    "height"
+   ],
    "rise": 13.061224
   },
   {
@@ -317,6 +398,9 @@
     "u": 22,
     "angle": 25
    },
+   "asks": [
+    "height"
+   ],
    "rise": 4.41048
   },
   {
@@ -327,6 +411,9 @@
    "given": {
     "t_top": 2
    },
+   "asks": [
+    "height"
+   ],
    "rise": 19.6
   },
   {
@@ -338,6 +425,9 @@
     "u": 3,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 0.459184
   },
   {
@@ -349,6 +439,9 @@
     "u": 10,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 5.102041
   },
   {
@@ -361,6 +454,9 @@
     "angle": 90,
     "g": 10
    },
+   "asks": [
+    "height"
+   ],
    "rise": 31.25
   },
   {
@@ -372,6 +468,9 @@
     "u": 5,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 1.27551
   },
   {
@@ -383,6 +482,9 @@
     "u": 20,
     "angle": 30
    },
+   "asks": [
+    "height"
+   ],
    "rise": 5.102041
   },
   {
@@ -394,6 +496,9 @@
     "u": 20,
     "angle": 30
    },
+   "asks": [
+    "height"
+   ],
    "rise": 5.102041
   },
   {
@@ -405,6 +510,9 @@
     "u": 20,
     "angle": 60
    },
+   "asks": [
+    "height"
+   ],
    "rise": 15.306122
   },
   {
@@ -416,6 +524,9 @@
     "u": 40,
     "angle": 45
    },
+   "asks": [
+    "height"
+   ],
    "rise": 40.816327
   },
   {
@@ -427,6 +538,9 @@
     "u": 30,
     "angle": 60
    },
+   "asks": [
+    "height"
+   ],
    "rise": 34.438776
   },
   {
@@ -438,6 +552,9 @@
     "u": 25,
     "angle": 28.6478897565
    },
+   "asks": [
+    "height"
+   ],
    "rise": 7.329364
   },
   {
@@ -449,6 +566,9 @@
     "u": 20.1168,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.647227
   },
   {
@@ -460,6 +580,9 @@
     "u": 9.7536,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 4.85371
   },
   {
@@ -471,6 +594,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -482,6 +608,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -493,6 +622,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -504,6 +636,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -515,6 +650,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -527,6 +665,9 @@
     "angle": 90,
     "g": 10
    },
+   "asks": [
+    "height"
+   ],
    "rise": 11.25
   },
   {
@@ -538,6 +679,9 @@
     "u": 30,
     "angle": 60
    },
+   "asks": [
+    "height"
+   ],
    "rise": 34.438776
   },
   {
@@ -549,6 +693,9 @@
     "u": 30,
     "angle": 60
    },
+   "asks": [
+    "height"
+   ],
    "rise": 34.438776
   },
   {
@@ -561,6 +708,9 @@
     "angle": 90,
     "g": 1.62
    },
+   "asks": [
+    "height"
+   ],
    "rise": 123.45679
   },
   {
@@ -573,6 +723,9 @@
     "angle": 90,
     "g": 3.71
    },
+   "asks": [
+    "height"
+   ],
    "rise": 13.477089
   },
   {
@@ -585,6 +738,9 @@
     "angle": 90,
     "h0": 2.5
    },
+   "asks": [
+    "height"
+   ],
    "rise": 7.346939,
    "above_ground": 9.846939
   },
@@ -598,6 +754,9 @@
     "angle": 90,
     "h0": 500
    },
+   "asks": [
+    "height"
+   ],
    "rise": 11.479592,
    "above_ground": 511.479592
   },
@@ -610,6 +769,9 @@
     "u": 200,
     "angle": 15
    },
+   "asks": [
+    "height"
+   ],
    "rise": 136.708772
   },
   {
@@ -621,6 +783,9 @@
     "u": 10,
     "angle": 89
    },
+   "asks": [
+    "height"
+   ],
    "rise": 5.100487
   },
   {
@@ -632,6 +797,9 @@
     "u": 10,
     "angle": 45.5
    },
+   "asks": [
+    "height"
+   ],
    "rise": 2.595542
   },
   {
@@ -643,6 +811,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -654,6 +825,9 @@
     "u": 20,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 20.408163
   },
   {
@@ -665,6 +839,9 @@
     "u": 20,
     "angle": 30
    },
+   "asks": [
+    "height"
+   ],
    "rise": 5.102041
   },
   {
@@ -676,7 +853,463 @@
     "u": 15,
     "angle": 90
    },
+   "asks": [
+    "height"
+   ],
    "rise": 11.479592
+  },
+  {
+   "id": "D01",
+   "category": "flight_and_range",
+   "question": "A ball is thrown up at 20 m/s. Find the time to reach the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "asks": [
+    "t_top"
+   ],
+   "t_top": 2.040816
+  },
+  {
+   "id": "D02",
+   "category": "flight_and_range",
+   "question": "A projectile is fired at 30 m/s at 45°. Find its horizontal range.",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 45
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 91.836735
+  },
+  {
+   "id": "D03",
+   "category": "flight_and_range",
+   "question": "A ball is thrown up at 20 m/s. How long is it in the air?",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 4.081633
+  },
+  {
+   "id": "D20",
+   "category": "flight_and_range",
+   "question": "A projectile is fired at 50 m/s at 30°. Find the maximum height and the range.",
+   "expect": "solvable",
+   "given": {
+    "u": 50,
+    "angle": 30
+   },
+   "asks": [
+    "height",
+    "range"
+   ],
+   "rise": 31.887755,
+   "range": 220.924848
+  },
+  {
+   "id": "E01",
+   "category": "flight_and_range",
+   "question": "A ball is kicked at 20 m/s at 30° above the horizontal. Find the time of flight.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 30
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 2.040816
+  },
+  {
+   "id": "E02",
+   "category": "flight_and_range",
+   "question": "A projectile is launched at 40 m/s at 60° to the horizontal. Find its range.",
+   "expect": "solvable",
+   "given": {
+    "u": 40,
+    "angle": 60
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 141.391903
+  },
+  {
+   "id": "E03",
+   "category": "flight_and_range",
+   "question": "A stone is thrown at 15 m/s at 45°. Find the horizontal range. Take g = 10 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 45,
+    "g": 10
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 22.5
+  },
+  {
+   "id": "E04",
+   "category": "flight_and_range",
+   "question": "A ball is thrown at 25 m/s at 37° to the horizontal. Find the time taken to reach the highest point. g = 10 m/s²",
+   "expect": "solvable",
+   "given": {
+    "u": 25,
+    "angle": 37,
+    "g": 10
+   },
+   "asks": [
+    "t_top"
+   ],
+   "t_top": 1.504538
+  },
+  {
+   "id": "E05",
+   "category": "flight_and_range",
+   "question": "A cricket ball is hit at 30 m/s at 40° above the horizontal. Find the maximum height, the time of flight and the range.",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 40
+   },
+   "asks": [
+    "height",
+    "t_flight",
+    "range"
+   ],
+   "rise": 18.972363,
+   "t_flight": 3.935434,
+   "range": 90.441528
+  },
+  {
+   "id": "E06",
+   "category": "flight_and_range",
+   "question": "A ball is thrown straight up at 14.7 m/s. How long does it take to reach the highest point?",
+   "expect": "solvable",
+   "given": {
+    "u": 14.7,
+    "angle": 90
+   },
+   "asks": [
+    "t_top"
+   ],
+   "t_top": 1.5
+  },
+  {
+   "id": "E07",
+   "category": "flight_and_range",
+   "question": "A ball is thrown vertically upwards at 19.6 m/s. Find the total time it spends in the air.",
+   "expect": "solvable",
+   "given": {
+    "u": 19.6,
+    "angle": 90
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 4.0
+  },
+  {
+   "id": "E08",
+   "category": "flight_and_range",
+   "question": "A stone is thrown upward at 10 m/s from the top of a tower 15 m high. How long does it take to hit the ground?",
+   "expect": "solvable",
+   "given": {
+    "u": 10,
+    "angle": 90,
+    "h0": 15
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 3.045861
+  },
+  {
+   "id": "E09",
+   "category": "flight_and_range",
+   "question": "A ball is thrown horizontally at 12 m/s from the top of a building 20 m tall. How far from the base of the building does it land?",
+   "expect": "solvable",
+   "given": {
+    "u": 12,
+    "angle": 0,
+    "h0": 20
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 24.243661
+  },
+  {
+   "id": "E10",
+   "category": "flight_and_range",
+   "question": "A stone is thrown horizontally from a cliff 45 m high with a speed of 15 m/s. Find the time taken to reach the ground and the horizontal distance travelled. Take g = 10 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 0,
+    "h0": 45,
+    "g": 10
+   },
+   "asks": [
+    "t_flight",
+    "range"
+   ],
+   "t_flight": 3.0,
+   "range": 45.0
+  },
+  {
+   "id": "E11",
+   "category": "flight_and_range",
+   "question": "A ball leaves the edge of a table 0.8 m high moving horizontally at 3 m/s. How far from the table does it land?",
+   "expect": "solvable",
+   "given": {
+    "u": 3,
+    "angle": 0,
+    "h0": 0.8
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 1.212183
+  },
+  {
+   "id": "E12",
+   "category": "flight_and_range",
+   "question": "A projectile is fired at 100 m/s at 30° above the horizontal. Calculate the time of flight and the horizontal range. (g = 9.8 m/s²)",
+   "expect": "solvable",
+   "given": {
+    "u": 100,
+    "angle": 30
+   },
+   "asks": [
+    "t_flight",
+    "range"
+   ],
+   "t_flight": 10.204082,
+   "range": 883.699392
+  },
+  {
+   "id": "E13",
+   "category": "flight_and_range",
+   "question": "A football is kicked from the ground at 18 m/s at an angle of 50° to the horizontal. How long is it in the air?",
+   "expect": "solvable",
+   "given": {
+    "u": 18,
+    "angle": 50
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 2.814041
+  },
+  {
+   "id": "E14",
+   "category": "flight_and_range",
+   "question": "A ball is thrown at 72 km/h at 30° above the horizontal. Find the range.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 30
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 35.347976
+  },
+  {
+   "id": "E15",
+   "category": "flight_and_range",
+   "question": "A ball is projected at 20 m/s at an angle of 30° with the vertical. Find the horizontal range.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 60
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 35.347976
+  },
+  {
+   "id": "E16",
+   "category": "flight_and_range",
+   "question": "An arrow is shot at 50 m/s at π/6 radians above the horizontal. Find its time of flight.",
+   "expect": "solvable",
+   "given": {
+    "u": 50,
+    "angle": 30
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 5.102041
+  },
+  {
+   "id": "E17",
+   "category": "flight_and_range",
+   "question": "A ball is thrown upward at 20 m/s at 60° to the horizontal from the edge of a cliff 30 m high. Find the time it takes to land on the ground below and how far from the cliff it lands.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 60,
+    "h0": 30
+   },
+   "asks": [
+    "t_flight",
+    "range"
+   ],
+   "t_flight": 4.808147,
+   "range": 48.081466
+  },
+  {
+   "id": "E18",
+   "category": "flight_and_range",
+   "question": "A ball is thrown up at 15 m/s. Find the time to reach the top and the maximum height. Take g = 10 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 90,
+    "g": 10
+   },
+   "asks": [
+    "height",
+    "t_top"
+   ],
+   "rise": 11.25,
+   "t_top": 1.5
+  },
+  {
+   "id": "E19",
+   "category": "flight_and_range",
+   "question": "A golf ball is struck at 45 m/s at 35° to the horizontal. What is its range? Use g = 9.81 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 45,
+    "angle": 35,
+    "g": 9.81
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 193.973247
+  },
+  {
+   "id": "E20",
+   "category": "flight_and_range",
+   "question": "A stone is thrown horizontally at 5 m/s from a bridge 19.6 m above the water. How long does it take to reach the water?",
+   "expect": "solvable",
+   "given": {
+    "u": 5,
+    "angle": 0,
+    "h0": 19.6
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 2.0
+  },
+  {
+   "id": "E21",
+   "category": "flight_and_range",
+   "question": "On the Moon (g = 1.62 m/s²) an astronaut hits a golf ball at 20 m/s at 45° to the horizontal. Find the range.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 45,
+    "g": 1.62
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 246.91358
+  },
+  {
+   "id": "E22",
+   "category": "flight_and_range",
+   "question": "A ball is thrown at 30 m/s at 60° above the horizontal. Find the time taken to reach maximum height, the maximum height, and the time of flight.",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 60
+   },
+   "asks": [
+    "height",
+    "t_top",
+    "t_flight"
+   ],
+   "rise": 34.438776,
+   "t_top": 2.651098,
+   "t_flight": 5.302196
+  },
+  {
+   "id": "E23",
+   "category": "flight_and_range",
+   "question": "A ball is kicked at 25 m/s at 45° to the ground. Find the horizontal distance it covers before landing.",
+   "expect": "solvable",
+   "given": {
+    "u": 25,
+    "angle": 45
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 63.77551
+  },
+  {
+   "id": "E24",
+   "category": "flight_and_range",
+   "question": "A body is projected with a velocity of 40 m/s at an angle of 30° to the horizontal. Find (a) the time of flight (b) the horizontal range.",
+   "expect": "solvable",
+   "given": {
+    "u": 40,
+    "angle": 30
+   },
+   "asks": [
+    "t_flight",
+    "range"
+   ],
+   "t_flight": 4.081633,
+   "range": 141.391903
+  },
+  {
+   "id": "E25",
+   "category": "flight_and_range",
+   "question": "A ball is thrown vertically upward at 9.8 m/s. After how long does it return to the ground?",
+   "expect": "solvable",
+   "given": {
+    "u": 9.8,
+    "angle": 90
+   },
+   "asks": [
+    "t_flight"
+   ],
+   "t_flight": 2.0
+  },
+  {
+   "id": "E26",
+   "category": "flight_and_range",
+   "question": "A ball is thrown at 10 m/s at 40° above the horizontal from a window 5 m above the ground. Find the range.",
+   "expect": "solvable",
+   "given": {
+    "u": 10,
+    "angle": 40,
+    "h0": 5
+   },
+   "asks": [
+    "range"
+   ],
+   "range": 14.250899
   },
   {
    "id": "C01",
@@ -822,25 +1455,74 @@
    "why": "20 km is a distance, not a speed"
   },
   {
-   "id": "D01",
-   "category": "outside",
-   "question": "A ball is thrown up at 20 m/s. Find the time to reach the maximum height.",
-   "expect": "not_mine",
-   "why": "asks for a time, not the height"
+   "id": "C21",
+   "category": "ambiguous",
+   "question": "A ball is thrown straight up at 20 m/s. Find its range.",
+   "expect": "unclear",
+   "why": "thrown straight up: it has no sideways motion, so the range question needs checking"
   },
   {
-   "id": "D02",
-   "category": "outside",
-   "question": "A projectile is fired at 30 m/s at 45°. Find its horizontal range.",
-   "expect": "not_mine",
-   "why": "asks for the range"
+   "id": "C22",
+   "category": "ambiguous",
+   "question": "A ball is thrown horizontally at 10 m/s. How long is it in the air?",
+   "expect": "unclear",
+   "why": "thrown horizontally, but from what height?"
   },
   {
-   "id": "D03",
-   "category": "outside",
-   "question": "A ball is thrown up at 20 m/s. How long is it in the air?",
-   "expect": "not_mine",
-   "why": "asks for time of flight"
+   "id": "C23",
+   "category": "ambiguous",
+   "question": "A ball is thrown horizontally at 15 m/s from a cliff. How far from the base does it land?",
+   "expect": "unclear",
+   "why": "the cliff's height is missing"
+  },
+  {
+   "id": "C24",
+   "category": "ambiguous",
+   "question": "A projectile is fired at 30 m/s. Find the time of flight.",
+   "expect": "unclear",
+   "why": "no direction or angle"
+  },
+  {
+   "id": "C25",
+   "category": "ambiguous",
+   "question": "A ball is thrown at an angle of 45° above the horizontal. Find the range.",
+   "expect": "unclear",
+   "why": "no speed"
+  },
+  {
+   "id": "C26",
+   "category": "ambiguous",
+   "question": "The vertical component of a projectile's velocity is 12 m/s. Find its range.",
+   "expect": "unclear",
+   "why": "the horizontal part of the speed is missing"
+  },
+  {
+   "id": "C27",
+   "category": "ambiguous",
+   "question": "A ball is thrown horizontally at 8 m/s from a 20 m high wall. Find the maximum height.",
+   "expect": "unclear",
+   "why": "thrown horizontally it never rises above the wall"
+  },
+  {
+   "id": "C28",
+   "category": "ambiguous",
+   "question": "A ball is thrown at 20 m/s at 30° above the horizontal. It is in the air for 5 s. Find the range.",
+   "expect": "unclear",
+   "why": "20 sin 30° gives about 2 s in the air, not 5 s"
+  },
+  {
+   "id": "C29",
+   "category": "ambiguous",
+   "question": "A ball is kicked at 20 m/s at 120° to the horizontal. Find the range.",
+   "expect": "unclear",
+   "why": "120° above the horizontal is not an upward launch angle"
+  },
+  {
+   "id": "C30",
+   "category": "ambiguous",
+   "question": "A ball is thrown at 20 at 30° above the horizontal. Find the time of flight.",
+   "expect": "unclear",
+   "why": "no unit on the speed"
   },
   {
    "id": "D04",
@@ -955,11 +1637,32 @@
    "why": "electricity"
   },
   {
-   "id": "D20",
+   "id": "D21",
    "category": "outside",
-   "question": "A projectile is fired at 50 m/s at 30°. Find the maximum height and the range.",
+   "question": "A ball is thrown up at 20 m/s. Find its speed just before it hits the ground.",
    "expect": "not_mine",
-   "why": "asks for the range too"
+   "why": "asks for a speed"
+  },
+  {
+   "id": "D22",
+   "category": "outside",
+   "question": "A projectile is fired at 40 m/s at 30°. Find its height after 1.5 s.",
+   "expect": "not_mine",
+   "why": "height at a given time, not the maximum"
+  },
+  {
+   "id": "D23",
+   "category": "outside",
+   "question": "Find the maximum range of a projectile launched at 30 m/s.",
+   "expect": "not_mine",
+   "why": "the best angle has to be found first"
+  },
+  {
+   "id": "D24",
+   "category": "outside",
+   "question": "A ball is thrown at 20 m/s at 45° from the ground and lands on a roof 5 m high. Find the time of flight.",
+   "expect": "not_mine",
+   "why": "it lands at a different level"
   }
  ]
 }

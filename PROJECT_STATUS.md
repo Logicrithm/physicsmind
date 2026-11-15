@@ -24,14 +24,16 @@
 - **Question reader** (`physicsmind/reader.py`, no AI involved): reads every number with its unit and converts it to SI
   (m/s, km/h, kmph, cm/s, mph, ft/s, knots; m/s², N/kg; m, cm, km; s, min; degrees, radians, π/6), works out what each
   number is from the words around it (launch speed, vertical component, angle and whether it is measured from the
-  horizontal or the vertical, g, launch height, time to reach the top, mass), and checks that the maximum-height
-  formula applies. Gives one of three verdicts:
+  horizontal or the vertical, g, launch height, time to reach the top, mass), works out what is asked (maximum
+  height, time to the top, time of flight, range, or several), and checks that the formulas apply. Gives one of
+  three verdicts:
   - solvable — answered by the solver;
   - unclear — no number; the reply says exactly what is missing or contradictory;
   - not handled — sent to the AI tutor with a note saying why the checked solver did not answer.
-- **Maximum-height solver** (`physicsmind/projectile.py`): straight up or at an angle, from the ground or a raised
-  point, from a launch speed, its vertical part, or the time to reach the top. SymPy solves the kinematics equations
-  and the direct formula h = u_y²/2g must agree before a number is shown.
+- **Projectile solver** (`physicsmind/projectile.py`): straight up, at an angle or horizontally, from the ground or a
+  raised point, landing on the ground. Each quantity is worked out two ways that must agree before a number is shown:
+  height (SymPy v² = u² + 2as and h = u_y²/2g), time to the top (SymPy v = u + at and u_y/g), time of flight (SymPy
+  s = ut + ½at² with s = −h₀, and the quadratic formula), range (SymPy on the path equation, and u_x × T).
 - **Answer routing** (`physicsmind/answer.py`): every answer is labelled solver, clarification, ai_tutor or
   ai_unavailable, and that label is saved with feedback.
 - **AI tutor** (`physicsmind/tutor.py`) for everything else, labelled "not independently verified": free providers
@@ -68,22 +70,33 @@
 - After fixing the reader: 100 correct; the fixes were also checked on 11 fresh wordings not in the set. The set is
   no longer blind, so new questions from testers or someone else are the next real measure.
 - The app's "What PhysicsMind can do" panel shows the score; a test keeps it equal to the real result.
+- Time to the top, time of flight and range (later on 15 Nov 2026): 40 questions added before the solver could
+  answer them (30 in a new flight_and_range group, 4 of them moved from outside; 10 ambiguous; 4 outside), 140 in
+  all. First run: 139 correct, 1 safe miss ("hits a golf ball at 20 m/s" read as a landing speed), 0 dangerous
+  (evals/first-run-flight-2026-11-15.md). Because the same person wrote the questions and the reader, 25 fresh
+  wordings were then tried: one gave a **wrong number** ("the horizontal distance at that moment", i.e. at the top,
+  was answered with the full range) and one was missed ("how far ... does it hit the ground"). All three fixed;
+  140 / 140 now, and the fresh wordings are tests in tests/test_flight.py.
 
 ## Limitations
-- The checked solver answers only maximum-height questions for one object in free flight. Time of flight, range,
-  inverse questions ("what speed reaches 20 m?") and every other topic go to the AI tutor, unchecked.
-- A question that asks for the maximum height and something else (e.g. the time) goes wholly to the AI tutor.
+- The checked solver answers maximum height, time to the top, time of flight and range for one object in free
+  flight that lands on the ground. Throws downward, drops, landing at another level (a roof, a table), the
+  greatest possible range, the position at a given time, inverse questions ("what speed reaches 20 m?") and every
+  other topic go to the AI tutor, unchecked.
+- A question that also asks for something the solver doesn't cover (e.g. the landing speed) goes wholly to the AI tutor.
+- "Time of flight" and "range" mean until it reaches the ground; from a raised point, "back to the launch height"
+  is asked about instead of guessed.
 - Numbers written as words ("twenty") are not read; the reader asks for digits.
 - A reply to a clarification is not combined with the earlier question: the student sends the full question again.
 - The reader works by word patterns, so unusual wording can still be misread; it is built to refuse rather than
-  guess, but it has only been tested on the questions in `tests/test_reader.py`.
+  guess, but it has only been tested on the questions in `tests/` and `evals/questions.json`.
 - General chat needs an OpenRouter key; free-model availability and quotas can change.
 - No image upload, broad RAG, simulations or adaptive learning yet. Conversation history is session-only.
 
 ## Next tasks
 1. Read testers' feedback in Supabase by response type; turn every wrong checked answer into a test and an
    evaluation question.
-2. Extend the checked solver to the rest of the same projectile (time to the top, time of flight, range), reusing the reader.
+2. Throws downward and drops (time to fall, range of a downward throw), then landing at another level.
 3. Straight-line constant-acceleration questions (the solver already supports u, v, a, s, t).
 4. Independent checking of AI tutor answers where a formula applies.
 5. Image input and visual learning later.

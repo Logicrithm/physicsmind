@@ -104,7 +104,7 @@ Built into the app:
   minute, so a burst of long answers can briefly spill over to OpenRouter), and OpenRouter's free models 50 a day
   for the whole account. These are 15 Nov 2026 figures; providers change them. Each visit may ask
   `AI_QUESTIONS_PER_VISIT` AI questions. Reloading the page starts a new visit, so this slows heavy use rather
-  than stopping it. Checked maximum-height answers and clarifications never use the AI.
+  than stopping it. Checked projectile answers and clarifications never use the AI.
 - **The app sleeps** after 12 hours with no visitors. The next visitor waits about a minute while it wakes.
 - **Testers' questions are stored.** The app asks them not to include personal details. It collects no names or
   emails.

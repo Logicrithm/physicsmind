@@ -5,8 +5,10 @@ A friendly, chat-style physics learning prototype for Windows.
 ## Included
 - Chat-first Streamlit interface with colourful, student-friendly styling.
 - Quick starter questions and session chat history.
-- Checked answers to maximum-height questions: a question reader converts units (km/h, cm/s, degrees, radians...),
-  works out what each number means, checks the formula applies, and SymPy plus the direct formula must agree.
+- Checked answers for a launched object: maximum height, time to reach the top, time of flight and horizontal
+  range, alone or together; straight up, at an angle or horizontally from a height. A question reader converts
+  units (km/h, cm/s, degrees, radians...), works out what each number means, checks the formulas apply, and each
+  answer is worked out two ways (SymPy and a direct formula) that must agree.
   When a question is unclear it asks instead of guessing.
 - Optional free AI tutor for general physics questions: Groq first, OpenRouter as the second choice, with a
   per-visit allowance so the free daily answers last. It is labelled unchecked.
@@ -67,12 +69,13 @@ python -m pytest -q
 ## Current limitations
 - General chat requires a free AI key. Each visit may ask `AI_QUESTIONS_PER_VISIT` AI questions (default 10);
   reloading the page starts a new visit, so this slows heavy use rather than stopping it.
-- The checked solver answers only maximum-height questions (one object in free flight, straight up or at an angle,
-  from the ground or a raised point). Everything else goes to the AI tutor and is labelled unchecked.
+- The checked solver answers only projectile questions about one object in free flight that lands on the ground:
+  maximum height, time to the top, time of flight and range. Throws downward, drops, landing on a roof or table,
+  and every other topic go to the AI tutor and are labelled unchecked.
 - Other numerical problems are not yet automatically parsed into solver inputs.
 - Feedback is stored locally and is not automatically used to train the model.
 - The current solver is not a complete physics verification engine.
 
 ## Next milestone
-Extend the checked solver to the rest of projectile motion (time of flight, range) and to straight-line motion,
-reusing the same question reader. See PROJECT_STATUS.md.
+Extend the checked solver to throws downward and drops, and then to straight-line motion, reusing the same
+question reader. See PROJECT_STATUS.md.

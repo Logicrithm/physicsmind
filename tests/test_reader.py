@@ -3,14 +3,14 @@ import math
 
 import pytest
 
-from physicsmind.projectile import solve_max_height
+from physicsmind.projectile import solve_projectile
 from physicsmind.reader import NOT_MINE, SOLVABLE, UNCLEAR, quantities, normalise, read_question
 
 
 def height(question):
     reading = read_question(question)
     assert reading.status == SOLVABLE, reading.reasons
-    solution = solve_max_height(reading)
+    solution = solve_projectile(reading)
     assert solution.ok, solution.problem
     return solution
 
@@ -109,7 +109,7 @@ def test_unclear_questions_get_no_number(question, needed):
     reading = read_question(question)
     assert reading.status == UNCLEAR, reading
     assert any(needed in reason for reason in reading.reasons), reading.reasons
-    assert not solve_max_height(reading).ok
+    assert not solve_projectile(reading).ok
 
 
 # --- Not this solver's question: handed to the AI tutor ---
@@ -119,8 +119,8 @@ def test_unclear_questions_get_no_number(question, needed):
     ("a car is at speed of 40 km/hr and another one from other direction at 60 km/hr, when will they meet", False),
     ("With what speed must a ball be thrown to reach a maximum height of 20 m?", True),
     ("A ball reaches a maximum height of 20 m. Find its initial velocity.", True),
-    ("Find the maximum height and the time taken to reach it for a ball thrown up at 20 m/s.", True),
-    ("A ball is thrown at 20 m/s at 30°. Find the maximum height and the range.", True),
+    ("Find the maximum height and the speed at the top for a ball thrown at 20 m/s at 30°.", True),
+    ("A ball is thrown at 20 m/s at 30°. Find the maximum height and the kinetic energy at the top.", True),
     ("A ball is thrown upward at 20 m/s with air resistance. Find the maximum height.", True),
     ("A rocket accelerates upward at 5 m/s^2 for 10 s. Find the maximum height.", True),
     ("A block slides up an incline at 5 m/s. Find the maximum height.", True),
@@ -167,7 +167,7 @@ def test_exponents_inside_units_are_not_read_as_numbers():
 def test_fixed_gaps_now_ask_instead_of_guessing(question, needed):
     reading = read_question(question)
     assert reading.status == UNCLEAR and needed in " ".join(reading.reasons), reading.reasons
-    assert not solve_max_height(reading).ok
+    assert not solve_projectile(reading).ok
 
 
 def test_vertically_upward_is_still_answered():
