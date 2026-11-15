@@ -21,7 +21,7 @@ py --version
 py -3.11 -m venv .venv
 .\\.venv\\Scripts\\Activate.ps1
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 streamlit run app.py
 ```
 
@@ -47,6 +47,7 @@ See [DEPLOY.md](DEPLOY.md): Streamlit Community Cloud for the app, Supabase for 
 
 ## Run the tests
 ```powershell
+pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 

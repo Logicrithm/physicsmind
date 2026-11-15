@@ -2,7 +2,7 @@ import uuid
 import streamlit as st
 from dotenv import load_dotenv
 
-from physicsmind.answer import make_answer
+from physicsmind.answer import MAX_QUESTION_CHARS, make_answer
 from physicsmind.config import use_only_own_keys, whole_number
 from physicsmind.feedback import FeedbackNotSaved, choose_store
 from physicsmind.version import app_version
@@ -13,6 +13,12 @@ store = choose_store()  # Supabase when SUPABASE_URL and SUPABASE_KEY are set, e
 VERSION = app_version()
 # Each visit may ask the AI tutor this many questions, so the free daily allowance lasts for every tester. 0 = AI off.
 AI_PER_VISIT = whole_number("AI_QUESTIONS_PER_VISIT", 10)
+# Each visit may send this much feedback, so a script can't flood the free feedback database.
+FEEDBACK_PER_VISIT = 40
+NOTE_CHARS = 500
+PRIVACY_NOTE = ("Questions and feedback you send are saved to improve PhysicsMind, and general questions are sent to an "
+                "outside AI service (Groq or OpenRouter) to be answered. Please don’t include your name, contact details "
+                "or anything personal.")
 
 st.set_page_config(
     page_title="PhysicsMind | Your Physics Buddy",
@@ -233,6 +239,8 @@ if "feedback_done" not in st.session_state:
     st.session_state.feedback_done = set()
 if "ai_used" not in st.session_state:
     st.session_state.ai_used = 0
+if "feedback_sent" not in st.session_state:
+    st.session_state.feedback_sent = 0
 
 def start_new_chat():
     st.session_state.messages = []
@@ -297,7 +305,9 @@ for index, message in enumerate(st.session_state.messages):
         if message["role"] == "assistant":
             st.caption(f"PhysicsMind • {message.get('model', 'AI')} • {message.get('verification', 'not verified')}")
             fid = message.get("id", f"msg_{index}")
-            if fid not in st.session_state.feedback_done:
+            if fid not in st.session_state.feedback_done and st.session_state.feedback_sent >= FEEDBACK_PER_VISIT:
+                st.caption("Thanks for all your feedback this visit! You've reached the limit for one visit.")
+            elif fid not in st.session_state.feedback_done:
                 with st.form(key=f"feedback_form_{fid}"):
                     st.markdown("**Was this explanation helpful?**")
                     rating = st.radio("Your feedback", ["👍 Yes, helpful", "👎 Not quite"], horizontal=True, label_visibility="collapsed")
@@ -306,7 +316,7 @@ for index, message in enumerate(st.session_state.messages):
                         ["No issue", "Incorrect formula", "Calculation error", "Explanation unclear", "Missing steps", "Units error", "Other"],
                         label_visibility="collapsed"
                     )
-                    comment = st.text_input("Optional note", placeholder="What could we do better?")
+                    comment = st.text_input("Optional note", placeholder="What could we do better?", max_chars=NOTE_CHARS)
                     if st.form_submit_button("Send feedback"):
                         try:
                             store.save(
@@ -325,13 +335,14 @@ for index, message in enumerate(st.session_state.messages):
                             st.error(f"Sorry, your feedback wasn't saved because {problem}. Please try sending it again.")
                         else:
                             st.session_state.feedback_done.add(fid)
+                            st.session_state.feedback_sent += 1
                             st.rerun()
             else:
                 st.caption("💚 Thanks — feedback saved!")
 
 # Chat input
 pending = st.session_state.pop("pending_prompt", None)
-user_prompt = st.chat_input("Ask me a physics question…")
+user_prompt = st.chat_input("Ask me a physics question…", max_chars=MAX_QUESTION_CHARS)
 if pending:
     user_prompt = pending
 
@@ -346,8 +357,7 @@ if user_prompt:
             st.session_state.ai_used += 1
         st.markdown(answer.text)
         st.caption(f"PhysicsMind • {answer.source} • {answer.verification}")
-        st.info(f"You can rate this answer below. Questions, answers and feedback you send are saved {store.where} "
-                "to improve PhysicsMind, so please don't include personal details.")
+        st.info(f"You can rate this answer below. Feedback is saved {store.where}. {PRIVACY_NOTE}")
     st.session_state.messages.append({
         "role": "assistant",
         "content": answer.text,
@@ -362,5 +372,4 @@ if user_prompt:
 
 if not st.session_state.messages:
     st.markdown('<p class="small-note">💡 Tip: There are no silly questions here. Ask “why?”, ask for an example, or ask us to explain it more simply.</p>', unsafe_allow_html=True)
-    st.markdown('<p class="small-note">🔒 Questions and feedback you send are saved to improve PhysicsMind. '
-                'Please don’t include your name, contact details or anything personal.</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="small-note">🔒 {PRIVACY_NOTE}</p>', unsafe_allow_html=True)  # fixed text only

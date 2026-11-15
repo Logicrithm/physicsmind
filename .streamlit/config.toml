@@ -8,3 +8,10 @@ font = "sans serif"
 
 [server]
 headless = true
+
+[client]
+# Public site: visitors see a plain "something went wrong", never code, file paths or error text.
+# Full details still print in the server console (and in Streamlit Cloud's logs) for you.
+showErrorDetails = "none"
+# Hide developer menu items (rerun, clear cache, deploy) from visitors.
+toolbarMode = "viewer"

@@ -1,0 +1,3 @@
+# For running the tests on this computer (not installed on the live site).
+-r requirements.txt
+pytest==9.2.0

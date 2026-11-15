@@ -63,3 +63,31 @@ def test_an_unclear_question_is_answered_with_a_question():
     app = ask("A ball is thrown at 20 m/s. Find the maximum height.")
     assert "which way" in replies(app)[0]
     assert app.session_state.messages[-1]["response_type"] == "clarification"
+
+
+def test_the_chat_box_and_feedback_note_have_length_limits():
+    from physicsmind.answer import MAX_QUESTION_CHARS
+    app = ask("A ball is thrown up at 72 km/h. Find the maximum height.")
+    assert app.chat_input[0].proto.max_chars == MAX_QUESTION_CHARS
+    assert app.text_input[0].proto.max_chars == 500
+
+
+def test_after_the_visit_feedback_limit_no_more_forms_are_shown():
+    app = AppTest.from_file(APP, default_timeout=60).run()
+    app.session_state["feedback_sent"] = 40
+    app.chat_input[0].set_value("A ball is thrown up at 72 km/h. Find the maximum height.").run()
+    assert not app.exception
+    assert not [b for b in app.button if b.label == "Send feedback"]
+    assert any("reached the limit for one visit" in c.value for c in app.caption)
+
+
+def test_the_privacy_note_says_general_questions_go_to_an_outside_ai():
+    app = AppTest.from_file(APP, default_timeout=60).run()
+    assert any("outside AI service" in m.value for m in app.markdown)
+
+
+def test_public_site_settings_hide_error_details_and_developer_menu():
+    import tomllib
+    settings = tomllib.loads((Path(APP).parent / ".streamlit" / "config.toml").read_text(encoding="utf-8"))
+    assert settings["client"] == {"showErrorDetails": "none", "toolbarMode": "viewer"}
+    assert "enableCORS" not in settings["server"]  # Streamlit's protective default stays on

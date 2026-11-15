@@ -109,3 +109,12 @@ def test_ai_maths_is_turned_into_the_form_streamlit_renders():
     answer = make_answer("Explain voltage.", FakeTutor((reply, "test-model", None)))
     assert answer.text == (r"Voltage $V$ is in volts, $\mathrm{J\,C^{-1}}$." "\n\n" "$$V = IR$$" "\n\n"
                            "Already fine: $I$ and a price of 5 dollars.")
+
+
+def test_a_message_over_the_limit_is_refused_before_anything_runs():
+    from physicsmind.answer import MAX_QUESTION_CHARS, TOO_LONG
+    tutor = FakeTutor()
+    answer = make_answer("Why is the sky blue? " * 100, tutor)
+    assert answer.response_type == TOO_LONG and "too long" in answer.text and not answer.used_ai
+    assert tutor.questions == []
+    assert make_answer("x" * MAX_QUESTION_CHARS, tutor).response_type != TOO_LONG  # exactly at the limit is fine

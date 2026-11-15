@@ -17,6 +17,11 @@ from .tutor import LIMIT_REACHED, NOT_CONFIGURED, ask_tutor
 
 SOLVER, CLARIFICATION, AI_TUTOR, AI_UNAVAILABLE = "solver", "clarification", "ai_tutor", "ai_unavailable"
 AI_LIMIT = "ai_limit"  # this visitor has used their AI questions for the visit; the AI was not called
+TOO_LONG = "too_long"  # refused before anything ran, so one pasted essay can't use up the shared AI allowance
+
+MAX_QUESTION_CHARS = 1500  # a long textbook question is about 600 characters
+TOO_LONG_TEXT = (f"That message is too long for me (the limit is {MAX_QUESTION_CHARS} characters). Please send just the "
+                 "physics question, and split a long problem into its parts.")
 
 SOLVER_STILL_WORKS = "Checked maximum-height questions still work, because they don't need the AI."
 UNAVAILABLE_TEXT = {
@@ -43,6 +48,9 @@ class Answer:
 
 
 def make_answer(question: str, tutor=ask_tutor, ai_allowed: bool = True) -> Answer:
+    # Checked here as well as in the chat box, because a modified browser can skip the chat box's own limit.
+    if len(question) > MAX_QUESTION_CHARS:
+        return Answer(TOO_LONG_TEXT, "PhysicsMind", TOO_LONG, "not answered: message too long")
     reading = read_question(question)
     if reading.status == SOLVABLE:
         solution = solve_max_height(reading)
