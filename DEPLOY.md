@@ -12,9 +12,10 @@ AI tutor uses free Groq and OpenRouter keys. Keys go only into the host's Secret
 
 ## One-time setup (about 15 minutes)
 
-### 1. GitHub repository
-Create an empty **private** repository at https://github.com/new, named `physicsmind`. Don't add a README,
-`.gitignore` or licence. The code is then pushed to it from this folder.
+### 1. GitHub repository (done 15 Nov 2026)
+The code is at https://github.com/Logicrithm/physicsmind, **public** by choice: it holds no keys, passwords or
+personal data (checked before the first upload), Streamlit then only needs to read public code, and it can be
+shown on the portfolio. Anyone can read the code; nobody can change it without your GitHub account.
 
 ### 2. Supabase (where online feedback is kept)
 1. Sign in at https://supabase.com (signing in with GitHub works) and create a **New project**. Pick the region
@@ -74,8 +75,9 @@ or `ai_limit`), and `app_version` says which release gave the answer.
 ## Security checklist
 What protects the app, and what you must keep doing:
 
-- **Keep the GitHub repository private.** Settings → General → Danger Zone → Change visibility → Private.
-  The code has no keys in it, but a private repo also keeps your history and plans to yourself.
+- **The repository is public, so never commit a secret.** `.gitignore` keeps `.env`, databases and backups out.
+  Before each release, `git status` should list no `.env`, `.db` or `secrets` file. If a key is ever committed,
+  treat it as leaked even if you delete it again: replace the key (below).
 - **Turn on two-factor sign-in for GitHub** (Settings → Password and authentication). Streamlit and Supabase
   can be signed into through GitHub, so your GitHub account protects all three.
 - **Never add a payment card to Groq or OpenRouter.** On free plans a leaked key can only use up free answers;

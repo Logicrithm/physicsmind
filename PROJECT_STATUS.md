@@ -12,9 +12,10 @@
 - Token efficiency: deterministic code first, LLM only when needed.
 - A wrong number presented as checked is worse than no number: when the question reader is unsure, it asks instead of guessing (15 Nov 2026).
 - Git restore points: `c21253f` (baseline, 14 Nov 2026), `c9bcb78` (question reader, 15 Nov 2026),
-  `897400a` (ready for a public site). Commits use GitHub's no-reply email, not a personal address.
+  `f375056` (ready for a public site). Commits use GitHub's no-reply email, not a personal address.
   `.env` and `physicsmind.db` are never committed.
-- Online (15 Nov 2026): Streamlit Community Cloud from a private GitHub repo; `main` is live, `dev` is work in
+- Online (15 Nov 2026): Streamlit Community Cloud from the public GitHub repo github.com/Logicrithm/physicsmind
+  (no keys or personal data in it); `main` is live, `dev` is work in
   progress, and a change reaches `main` only after the tests pass. Feedback goes to Supabase online, because the
   host's disk is wiped on every restart. See DEPLOY.md.
 
