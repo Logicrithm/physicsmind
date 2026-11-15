@@ -24,7 +24,7 @@ st.set_page_config(
     page_title="PhysicsMind | Your Physics Buddy",
     page_icon="⚛️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",  # open on computers, closed on phones so it does not cover the chat
 )
 
 # ---------- Visual design ----------

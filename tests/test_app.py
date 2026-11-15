@@ -91,3 +91,9 @@ def test_public_site_settings_hide_error_details_and_developer_menu():
     settings = tomllib.loads((Path(APP).parent / ".streamlit" / "config.toml").read_text(encoding="utf-8"))
     assert settings["client"] == {"showErrorDetails": "none", "toolbarMode": "viewer"}
     assert "enableCORS" not in settings["server"]  # Streamlit's protective default stays on
+
+
+def test_the_sidebar_does_not_open_over_the_chat_on_phones():
+    # Found on the live site on 15 Nov 2026: with "expanded", a narrow screen opened the sidebar over the chat box.
+    source = Path(APP).read_text(encoding="utf-8")
+    assert 'initial_sidebar_state="auto"' in source and 'initial_sidebar_state="expanded"' not in source
