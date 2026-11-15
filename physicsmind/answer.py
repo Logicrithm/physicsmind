@@ -79,9 +79,33 @@ def make_answer(question: str, tutor=ask_tutor, ai_allowed: bool = True) -> Answ
 
 def streamlit_math(text: str) -> str:
     r"""Many models write maths as \( ... \) and \[ ... \]. Streamlit only renders $ ... $ and $$ ... $$, so without
-    this a student sees "J C(^{-1})" instead of the formula (found in the running app on 15 Nov 2026)."""
-    text = re.sub(r"\\\[(.+?)\\\]", lambda m: f"$${m.group(1).strip()}$$", text, flags=re.S)
-    return re.sub(r"\\\((.+?)\\\)", lambda m: f"${m.group(1).strip()}$", text, flags=re.S)
+    this a student sees "J C(^{-1})" instead of the formula (found in the running app on 15 Nov 2026).
+
+    Every display formula becomes a real maths block: "$$" alone on a line, the formula on one line, "$$" alone on
+    a line. Streamlit starts a block only at a line holding nothing but "$$": "$$v_x = ..." followed by more lines
+    lost its first line and never closed, so the rest of the answer showed as raw symbols (testers' feedback,
+    15 Nov 2026), and "$$...$$" on one line is drawn as inline maths, where \tag and aligned equations fail.
+    The block keeps the indent of its line, so a formula inside a numbered step stays inside that step.
+    """
+    def block(match: re.Match) -> str:
+        latex = _one_line(match.group(1) if match.group(1) is not None else match.group(2))
+        line_start = text.rfind("\n", 0, match.start()) + 1
+        indent = re.match(r"[ \t]*", text[line_start:]).group()
+        return f"\n\n{indent}$$\n{indent}{latex}\n{indent}$$\n\n"
+
+    converted = DISPLAY_MATH.sub(block, text)
+    converted = re.sub(r"\n[ \t]*\n(?:[ \t]*\n)+", "\n\n", converted).strip("\n")  # no runs of empty lines
+    return re.sub(r"\\\((.+?)\\\)", lambda m: f"${_one_line(m.group(1))}$", converted, flags=re.S)
+
+
+# \[ ... \] (but not the "\\[2pt]" line break inside aligned maths) or the model's own $$ ... $$.
+DISPLAY_MATH = re.compile(r"(?<!\\)\\\[(.+?)\\\]|\$\$(.+?)\$\$", re.S)
+
+
+def _one_line(latex: str) -> str:
+    """A formula on one line. A LaTeX comment (% to the end of the line) is dropped first, or joining would hide the rest."""
+    lines = (re.sub(r"(?<!\\)%.*", "", line).strip() for line in latex.splitlines())
+    return " ".join(line for line in lines if line)
 
 
 def clarify(reading: Reading) -> str:

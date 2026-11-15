@@ -164,3 +164,23 @@ def test_a_range_only_answer_explains_the_time_it_needs():
 def test_a_height_only_answer_is_unchanged():
     text = make_answer("A ball is thrown vertically upward at 20 m/s. Find the maximum height.").text
     assert "**Answer: 20.41 m** (above the launch point)" in text and "**Answer**\n" not in text
+
+
+# --- Questions about understanding a formula go to the AI tutor (found in the running app, 15 Nov 2026) ---
+
+@pytest.mark.parametrize("question", [
+    "Explain step by step how the range formula R = u^2 sin(2θ)/g is derived for a projectile.",
+    "Derive the expression for the maximum height of a projectile.",
+    "Why is the time of flight twice the time to reach the top?",
+    "What is the formula for the horizontal range of a projectile?",
+    "Prove that the range is greatest at 45 degrees.",
+    "How does the maximum height depend on the launch angle?",
+])
+def test_asking_how_a_formula_works_is_not_turned_into_a_calculation(question):
+    reading = read_question(question)
+    assert reading.status == NOT_MINE and "formula" in reading.reasons[0], reading
+
+
+def test_a_calculation_that_mentions_an_equation_is_still_solved():
+    _, solution = solved("Using the equation v² = u² + 2as, find the maximum height of a ball thrown straight up at 14 m/s.")
+    assert solution.rise == pytest.approx(14 ** 2 / (2 * G))

@@ -1,5 +1,26 @@
 # PhysicsMind — Project Status
 
+## Product vision (15 Nov 2026)
+PhysicsMind is to become an interactive physics learning companion, not a collection of numerical solvers. In time
+a student should be able to learn concepts from the basics, see why formulas work (derivations), see diagrams and
+visual explanations, solve problems step by step, ask follow-up questions in context, practise similar problems
+with hints, and find and improve weak areas.
+
+For now the checked solver and its reliability come first, and the roadmap stays as it is. Rules for decisions:
+- Choose designs that serve the larger learning experience, not one numerical question type at a time.
+- Every milestone gives students something they can see and use, not only internal improvements.
+- Reassess regularly whether the work is moving towards this vision.
+
+How today's design fits, and what it will need:
+- The reader turns a question into a structured Reading (quantities, roles, what is asked), and the solver works
+  from that, not from the text. The same structure can later generate practice variants (change the numbers,
+  check them with the same solver), drive hints (reveal one step at a time) and answer follow-ups.
+- Still missing: explanations are built as finished text. Follow-ups, hints and diagrams need them kept as steps
+  (each with its formula, numbers and reason) and turned into text at the end. Do this when the next feature needs it.
+- Still missing: a conversation memory (the reply to a clarification and follow-up questions need the earlier question).
+- Feedback already stores which part answered (`response_type`); weak-area tracking will also need the topic
+  and the step a student struggled with.
+
 ## Decisions
 - ₹0 starting budget; free API quota only.
 - Windows, 8 GB RAM, no dedicated GPU.
@@ -60,6 +81,20 @@
   feedback but cannot read, change or delete it, and the table refuses bad ratings and oversized text.
 - Not verified on the live site: the hidden error details (no safe way to cause an error there; the setting is
   tested in tests/test_app.py).
+
+- 0.3.0 live since 15 Nov 2026 (after a reboot): the checked solver answers a range question there (91.84 m).
+- Testers reported AI explanations full of raw symbols (15 Nov 2026). Cause: Streamlit draws a maths block only
+  between lines holding nothing but "$$". The AI writes display maths over several lines, so the converted
+  "$$v_x = ..." lost its first line and never closed; and "$$...$$" on one line is drawn as inline maths, where
+  equation numbers (	ag) and aligned steps fail. Fixed in 0.3.1: every display formula becomes a real block ("$$",
+  the formula on one line, "$$"), keeping the indent of its numbered step. Three real AI answers (two saved in
+  tests/data) went from up to 36 raw "$" signs and 5 broken formulas to none, checked in a Streamlit page, in the
+  app itself, and at 375 px phone width (no sideways page scroll; two very long formulas scroll inside their own box).
+  The testers' feedback rows themselves were not read: the app's key can only add rows, and the Supabase dashboard
+  needs his sign-in.
+- Found while checking that fix (15 Nov 2026): "Explain how the range formula R = u² sin 2θ / g is derived" was read
+  as a range calculation and asked for a launch speed. Questions that ask to derive, prove or explain a formula,
+  without measured quantities, now go to the AI tutor (tests in tests/test_flight.py).
 
 ## Evaluation set (15 Nov 2026)
 - 100 questions in `evals/questions.json`, written before PhysicsMind was run on them; expected heights worked out

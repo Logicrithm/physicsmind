@@ -322,6 +322,19 @@ def _asked(text: str) -> tuple[list[str], list[str], bool]:
     return [name for name in ASKABLE if name in asks], list(dict.fromkeys(others)), height_given
 
 
+# Asking to understand a formula rather than for a number. Found in the running app on 15 Nov 2026: "Explain how the
+# range formula R = u² sin 2θ / g is derived" was read as a range calculation and asked for the launch speed.
+DERIVE = re.compile(r"\b(?:deriv\w*|prove|proof|show that|show how)\b")
+EXPLAIN = re.compile(r"\b(?:explain\w*|why|formula|expression|equation|in terms of|depends? on|how does .{0,40} change)\b")
+
+
+def _wants_understanding(text: str) -> bool:
+    """A derivation, or an explanation with no measured quantity (a number with a unit) to calculate with."""
+    if DERIVE.search(text):
+        return True
+    return bool(EXPLAIN.search(text)) and not any(q.kind for q in quantities(text)[0])
+
+
 def _show(value: float) -> str:
     """A number as a student would write it: 20, 20.41, 0.025."""
     if value == 0:
@@ -348,6 +361,9 @@ def _converted(q: Quantity) -> str:
 def read_question(question: str) -> Reading:
     text = normalise(question)
     asks, other_asks, height_given = _asked(text)
+    if asks and _wants_understanding(text):
+        return Reading(NOT_MINE, on_topic=False, asks=asks,
+                       reasons=["it asks how a formula comes about or why it works, not for a number"])
     if not asks:
         if height_given:
             reason = "it gives a maximum height and asks for something else"

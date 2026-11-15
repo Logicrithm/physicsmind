@@ -1,6 +1,6 @@
 # PhysicsMind evaluation (latest)
 
-Version 0.3.0 · b7f2f1f + local changes, run 2026-11-15. 140 questions; the AI is not called.
+Version 0.3.1 · 4fa172c + local changes, run 2026-11-15. 140 questions; the AI is not called.
 
 | Group | Questions | Correct | Safe misses | Dangerous |
 |---|---|---|---|---|

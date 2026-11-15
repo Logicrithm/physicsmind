@@ -107,7 +107,7 @@ def test_ai_maths_is_turned_into_the_form_streamlit_renders():
     reply = (r"Voltage \(V\) is in volts, \(\mathrm{J\,C^{-1}}\)." "\n\n" r"\[ V = IR \]" "\n\n"
              r"Already fine: $I$ and a price of 5 dollars.")
     answer = make_answer("Explain voltage.", FakeTutor((reply, "test-model", None)))
-    assert answer.text == (r"Voltage $V$ is in volts, $\mathrm{J\,C^{-1}}$." "\n\n" "$$V = IR$$" "\n\n"
+    assert answer.text == (r"Voltage $V$ is in volts, $\mathrm{J\,C^{-1}}$." "\n\n" "$$\nV = IR\n$$" "\n\n"
                            "Already fine: $I$ and a price of 5 dollars.")
 
 

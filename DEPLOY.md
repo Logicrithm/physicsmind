@@ -4,7 +4,10 @@ Everything here is free. The app runs on Streamlit Community Cloud, feedback is 
 AI tutor uses free Groq and OpenRouter keys. Keys go only into the host's Secrets page, never into GitHub.
 
 ## How versions work
-- `main` is the live version. Streamlit rebuilds the site by itself a minute or so after `main` changes.
+- `main` is the live version. Streamlit picks up a change to `main` by itself, but when only code changed (not
+  `requirements.txt`) the running app can keep the old code: on 15 Nov 2026 it still showed 0.2.2 five minutes
+  after 0.3.0 was pushed. After every release, check the version label at the bottom of the live page; if it is
+  old, open share.streamlit.io, click ⋮ next to the app and choose **Reboot**.
 - `dev` is where work happens. A change moves to `main` only after `python -m pytest -q` passes (and, once it
   exists, the evaluation set), so testers never see half-finished work.
 - Every feedback row stores the app version that gave the answer (the number in `physicsmind/__init__.py`,
