@@ -104,7 +104,10 @@ class OnlineStore:
     TABLE = "response_feedback"
 
     def __init__(self, url, key, send=urllib.request.urlopen):
-        self.url, self.key, self.send = url.rstrip("/"), key, send
+        url = url.strip().rstrip("/")
+        if url.endswith("/rest/v1"):  # Supabase shows the API address with this ending; the project URL is wanted
+            url = url[: -len("/rest/v1")]
+        self.url, self.key, self.send = url, key.strip(), send
 
     def save(self, **fields):
         row = feedback_row(**fields)

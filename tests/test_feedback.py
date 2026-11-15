@@ -120,3 +120,12 @@ def test_the_online_store_is_used_only_when_both_settings_are_present(monkeypatc
 def test_tests_never_use_the_real_feedback_file():
     assert feedback.DEFAULT_DB.name == "feedback.db"
     assert "physicsmind_phase1" not in str(feedback.DEFAULT_DB)
+
+
+@pytest.mark.parametrize("pasted", ["https://abc.supabase.co", "https://abc.supabase.co/", "https://abc.supabase.co/rest/v1/",
+                                    " https://abc.supabase.co/rest/v1 "])
+def test_the_project_url_works_however_it_was_copied(pasted):
+    send = FakeSend()
+    OnlineStore(pasted, " sb_publishable_123 ", send).save(**ROW)
+    assert send.requests[0].full_url == "https://abc.supabase.co/rest/v1/response_feedback"
+    assert send.requests[0].get_header("Apikey") == "sb_publishable_123"
