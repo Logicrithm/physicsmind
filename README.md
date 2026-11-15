@@ -41,6 +41,19 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 No paid fallback is configured. Free-model availability and quotas can change.
 
+## Evaluation set
+`evals/questions.json` holds 100 questions with independently worked expected outcomes: 30 straightforward, 30 with
+other units and angles, 20 ambiguous or incomplete (must get no number), 20 outside the solver (must go to the AI).
+
+```powershell
+python -m evals.run_eval
+```
+
+Results are correct, safe miss (no wrong number, but asked or passed to the AI needlessly) or dangerous (a wrong or
+unwanted number; must be zero). The first, blind run scored 96 with 2 dangerous (`evals/first-run-2026-11-15.md`);
+after fixing the reader it scores 100 (`evals/latest.md`). Since the set has now been fixed against, new questions
+written by someone else are the real test. `tests/test_eval.py` stops any change that lowers the score.
+
 ## Put it online
 See [DEPLOY.md](DEPLOY.md): Streamlit Community Cloud for the app, Supabase for feedback, `main` = live,
 `dev` = work in progress.

@@ -81,6 +81,7 @@ UNITS = [
     ("acceleration", r"ft\s*/\s*s\s*\^?\s*2|(?:feet|foot) per second squared", 0.3048, "ft/s²"),
     ("speed", r"km\s*/\s*h(?:rs?|ours?)?|kmph|kmh|km\s*hr?\s*\^?\s*-\s*1|km per hour|kilomet(?:re|er)s? (?:per|an) hour",
      1000 / 3600, "km/h"),
+    ("speed", r"km\s*/\s*s(?:ec)?|km\s*s\s*\^?\s*-\s*1|kilomet(?:re|er)s? (?:per|a) second", 1000.0, "km/s"),
     ("speed", r"cm\s*/\s*s(?:ec)?|cm\s*s\s*\^?\s*-\s*1|centimet(?:re|er)s? per second", 0.01, "cm/s"),
     ("speed", r"m\s*/\s*s(?:ecs?|econds?)?|m\s*s\s*\^?\s*-\s*1|ms\s*\^?\s*-\s*1|mps|met(?:re|er)s? (?:per|a) second",
      1.0, "m/s"),
@@ -227,6 +228,10 @@ VERTICAL_WORD = re.compile(r"\bvertically\b|\bstraight up\b")
 LAUNCH_POINT_BEFORE = re.compile(r"\b(?:from|off|top of|edge of|roof of|at a height of|height of)\b")
 LAUNCH_POINT_AFTER = re.compile(r"\s*(?:tall|high|above (?:the )?(?:ground|floor|sea level|sea|water|surface))\b")
 BELOW_POINT = re.compile(r"\s*(?:deep|below|beneath|under)\b")
+# A raised launch point named without a number ("from a height", "from the roof of a building"): the answer depends on
+# a height the question doesn't give. Found by the evaluation set on 15 Nov 2026 (it answered the rise only).
+RAISED_START = re.compile(r"\b(?:from|off)\s+(?:a|an|the|its|some)\s+(?:\w+\s+){0,2}?(?:height|top|roof|building|tower|cliff|"
+                          r"window|bridge|balcony|hill|hilltop|table|platform|ledge|wall|stairs|terrace|mountain)\b")
 TOP_TIME = re.compile(r"\b(?:reach\w*|gets? to|arriv\w* at|at)\s+(?:its |the )?(?:maximum height|max\.? height|highest point|top|peak)\b")
 
 
@@ -324,12 +329,14 @@ def read_question(question: str) -> Reading:
     launch, vertical, stray = [], [], []
     for q in speeds:
         before, _ = _window(text, q)
-        if q.label == "uy" or re.search(r"vertical (?:component|part)\b[^.,;]{0,40}$", before):
+        if q.label == "uy":
             vertical.append(q)
-        elif q.label == "ux" or re.search(r"horizontal (?:component|part)\b[^.,;]{0,40}$", before):
+        elif q.label == "ux" or re.search(r"horizontal (?:component|part|velocity|speed)\b[^.,;]{0,40}$", before):
             unclear.append(f"{q.written} is the horizontal part of the velocity. I need the launch speed, or its vertical part.")
         elif q.label == "v" or re.search(r"\b(?:final|landing|impact|lands|hits|on reaching|at the (?:top|highest point)|returns?)\b[^.,;]{0,25}$", before):
             stray.append(q)
+        elif re.search(r"vertical (?:component|part|velocity|speed)\b[^.,;]{0,40}$", before):
+            vertical.append(q)  # "vertical velocity" added 15 Nov 2026 (evaluation set); checked after "at the top" etc.
         else:
             launch.append(q)
     if stray:
@@ -401,7 +408,10 @@ def read_question(question: str) -> Reading:
             unclear.append(f"It says “vertically” but also gives an angle of {_converted(q)}. Which is it?")
         if DOWN.search(text) and not UP.search(text):
             unclear.append(f"It is thrown downward at {_converted(q)}, so it never rises above where it starts. Did you mean upward?")
-    elif reading.vertical_speed is None:
+    elif reading.vertical_speed is not None:
+        if DOWN.search(text) and not UP.search(text):
+            unclear.append("It is thrown downward, so it never rises above where it starts. Did you mean upward?")
+    else:
         down, up = DOWN.search(text), UP.search(text)
         if down and not up:
             unclear.append("It is dropped or thrown downward, so it never rises above where it starts. "
@@ -410,8 +420,10 @@ def read_question(question: str) -> Reading:
             unclear.append("Thrown horizontally, it never rises above where it starts. Did you mean at an angle above the horizontal?")
         elif AT_ANGLE.search(text):
             unclear.append("It is launched at an angle, but the angle isn't given. Please include it, e.g. “at 30° above the horizontal”.")
-        elif up or VERTICAL_WORD.search(text):
+        elif up:
             reading.straight_up = True
+        elif VERTICAL_WORD.search(text):  # found by the evaluation set on 15 Nov 2026: it had assumed upward
+            unclear.append("It says “vertically” but not whether it goes up or down. Is it thrown vertically upward?")
         elif reading.speed is not None:
             unclear.append("I can't tell which way it is thrown. Is it straight up, or at an angle above the ground (and which angle)?")
 
@@ -439,6 +451,10 @@ def read_question(question: str) -> Reading:
             reading.time_to_top = q
         else:
             unclear.append(f"I can't tell what the time {q.written} measures. Only the time to reach the top fits this question.")
+
+    if not reading.launch_height_written and RAISED_START.search(text) and not re.search(r"\bfrom (?:the )?(?:ground|floor)\b", text):
+        unclear.append("It starts from a raised point, but its height isn't given. How high above the ground is it "
+                       "launched from? (Or, if you only want the rise above the launch point, say so.)")
 
     if reading.speed is None and reading.vertical_speed is None and reading.time_to_top is None and not unclear:
         unclear.append("I couldn't find the launch speed. Please give it with its unit, e.g. “20 m/s”. "

@@ -59,6 +59,16 @@
 - Not verified on the live site: the hidden error details (no safe way to cause an error there; the setting is
   tested in tests/test_app.py).
 
+## Evaluation set (15 Nov 2026)
+- 100 questions in `evals/questions.json`, written before PhysicsMind was run on them; expected heights worked out
+  by hand and rechecked with plain arithmetic in `tests/test_eval.py`.
+- First, blind run: 96 correct, 2 safe misses, **2 dangerous**: "thrown vertically" was assumed upward, and "from a
+  height ... above the ground" was answered with the rise only. Safe misses: "vertical velocity" not recognised,
+  km/s unknown.
+- After fixing the reader: 100 correct; the fixes were also checked on 11 fresh wordings not in the set. The set is
+  no longer blind, so new questions from testers or someone else are the next real measure.
+- The app's "What PhysicsMind can do" panel shows the score; a test keeps it equal to the real result.
+
 ## Limitations
 - The checked solver answers only maximum-height questions for one object in free flight. Time of flight, range,
   inverse questions ("what speed reaches 20 m?") and every other topic go to the AI tutor, unchecked.
@@ -71,7 +81,8 @@
 - No image upload, broad RAG, simulations or adaptive learning yet. Conversation history is session-only.
 
 ## Next tasks
-1. Use it with real questions and rate the answers; read the saved feedback by response type.
+1. Read testers' feedback in Supabase by response type; turn every wrong checked answer into a test and an
+   evaluation question.
 2. Extend the checked solver to the rest of the same projectile (time to the top, time of flight, range), reusing the reader.
 3. Straight-line constant-acceleration questions (the solver already supports u, v, a, s, t).
 4. Independent checking of AI tutor answers where a formula applies.

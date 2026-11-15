@@ -2,6 +2,7 @@ import uuid
 import streamlit as st
 from dotenv import load_dotenv
 
+from physicsmind.about import ABOUT, TITLE as ABOUT_TITLE
 from physicsmind.answer import MAX_QUESTION_CHARS, make_answer
 from physicsmind.config import use_only_own_keys, whole_number
 from physicsmind.feedback import FeedbackNotSaved, choose_store
@@ -281,6 +282,10 @@ st.markdown("""
   <span class="pill">🚀 Learn by asking</span>
 </div>
 """, unsafe_allow_html=True)
+
+# What it can do and how testers can help. On the main page, not the sidebar, because phones keep the sidebar closed.
+with st.expander(ABOUT_TITLE, expanded=False):
+    st.markdown(ABOUT)
 
 # Quick starters when chat is empty
 if not st.session_state.messages:

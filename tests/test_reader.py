@@ -152,3 +152,42 @@ def test_units_are_recognised_and_converted(written, kind, si):
 def test_exponents_inside_units_are_not_read_as_numbers():
     found, _ = quantities(normalise("g = 9.8 m s^-2 and u = 2 x 10^1 m/s"))
     assert [(q.kind, q.value) for q in found] == [("acceleration", 9.8), ("speed", 20.0)]
+
+
+# --- Fixes from the evaluation set (15 Nov 2026), checked on fresh wording that is NOT in evals/questions.json ---
+
+@pytest.mark.parametrize("question, needed", [
+    ("A body is projected vertically with 30 m/s. Find the greatest height.", "up or down"),
+    ("A stone is thrown vertically at 12 m/s from the ground. How high does it go?", "up or down"),
+    ("A ball is thrown up at 10 m/s from the roof of a building. Find the maximum height above the ground.", "height isn't given"),
+    ("A ball is thrown up at 10 m/s off a table. Find the maximum height.", "height isn't given"),
+    ("A ball is thrown upward at 15 m/s from the top of a tall tower. Find its maximum height.", "height isn't given"),
+    ("A projectile has an initial vertical velocity of 12 m/s downward. Find the maximum height.", "downward"),
+])
+def test_fixed_gaps_now_ask_instead_of_guessing(question, needed):
+    reading = read_question(question)
+    assert reading.status == UNCLEAR and needed in " ".join(reading.reasons), reading.reasons
+    assert not solve_max_height(reading).ok
+
+
+def test_vertically_upward_is_still_answered():
+    assert height("A ball is thrown vertically upward at 30 m/s. Find the maximum height.").rise == pytest.approx(expected(30))
+
+
+def test_a_raised_start_with_its_height_is_still_answered():
+    solution = height("A ball is thrown up at 10 m/s from the roof of a 15 m building. Find the maximum height above the ground.")
+    assert solution.rise == pytest.approx(expected(10)) and solution.above_ground == pytest.approx(15 + expected(10))
+
+
+def test_from_the_ground_is_not_a_raised_start():
+    assert height("A ball is thrown up from the ground at 10 m/s. Find the maximum height.").rise == pytest.approx(expected(10))
+
+
+def test_vertical_speed_is_the_upward_part_of_the_launch():
+    assert height("The vertical speed of a projectile at launch is 12 m/s. Find its maximum height.").rise == pytest.approx(expected(12))
+
+
+def test_kilometres_per_second_is_a_speed():
+    # 0.5 km/s = 500 m/s; on the Moon 500² / (2 × 1.62) = 77,160 m.
+    solution = height("A probe is launched straight up at 0.5 km/s on the Moon, where g = 1.62 m/s². Find the maximum height.")
+    assert solution.rise == pytest.approx(500 ** 2 / (2 * 1.62))

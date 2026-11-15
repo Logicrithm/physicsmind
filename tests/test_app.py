@@ -97,3 +97,20 @@ def test_the_sidebar_does_not_open_over_the_chat_on_phones():
     # Found on the live site on 15 Nov 2026: with "expanded", a narrow screen opened the sidebar over the chat box.
     source = Path(APP).read_text(encoding="utf-8")
     assert 'initial_sidebar_state="auto"' in source and 'initial_sidebar_state="expanded"' not in source
+
+
+def test_testers_can_read_what_it_can_do_and_how_to_help():
+    from physicsmind.about import TITLE
+    app = AppTest.from_file(APP, default_timeout=60).run()
+    assert [e.label for e in app.expander] == [TITLE]
+    text = " ".join(m.value for m in app.expander[0].markdown)
+    for part in ("Checked answers", "AI tutor", "Being worked on next", "How you can help", "can be\n  wrong"):
+        assert part in text
+
+
+def test_the_score_shown_to_testers_matches_the_evaluation():
+    # The panel must not claim a better score than the evaluation set gives.
+    from evals.run_eval import CORRECT, run
+    from physicsmind.about import ABOUT
+    correct = sum(r.kind == CORRECT for r in run())
+    assert f"**{correct} / 100**" in ABOUT

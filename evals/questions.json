@@ -1,0 +1,965 @@
+{
+ "about": "PhysicsMind evaluation set, written 15 Nov 2026 before PhysicsMind was run on any of it. Givens were converted to SI by hand; expected heights come from h = u_y^2 / 2g with u_y = u sin(angle from the horizontal), the given vertical speed, or g times the time to the top. Angles are degrees from the horizontal (90 = straight up). g is 9.8 m/s^2 unless given.",
+ "items": [
+  {
+   "id": "A01",
+   "category": "straightforward",
+   "question": "A ball is thrown vertically upwards with a speed of 19.6 m/s. Find the maximum height it reaches.",
+   "expect": "solvable",
+   "given": {
+    "u": 19.6,
+    "angle": 90
+   },
+   "rise": 19.6
+  },
+  {
+   "id": "A02",
+   "category": "straightforward",
+   "question": "A body is projected vertically upward with a velocity of 49 m/s. Calculate the greatest height attained. (g = 9.8 m/s²)",
+   "expect": "solvable",
+   "given": {
+    "u": 49,
+    "angle": 90
+   },
+   "rise": 122.5
+  },
+  {
+   "id": "A03",
+   "category": "straightforward",
+   "question": "A stone is thrown straight up at 15 m/s. How high does it go?",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 90
+   },
+   "rise": 11.479592
+  },
+  {
+   "id": "A04",
+   "category": "straightforward",
+   "question": "A ball is thrown upward with an initial velocity of 12 m/s. What is the maximum height reached?",
+   "expect": "solvable",
+   "given": {
+    "u": 12,
+    "angle": 90
+   },
+   "rise": 7.346939
+  },
+  {
+   "id": "A05",
+   "category": "straightforward",
+   "question": "A projectile is fired at 40 m/s at an angle of 30° above the horizontal. Find its maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 40,
+    "angle": 30
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "A06",
+   "category": "straightforward",
+   "question": "A football is kicked at 25 m/s at an angle of 60° to the horizontal. What is the maximum height of the ball?",
+   "expect": "solvable",
+   "given": {
+    "u": 25,
+    "angle": 60
+   },
+   "rise": 23.915816
+  },
+  {
+   "id": "A07",
+   "category": "straightforward",
+   "question": "A ball is thrown up with a speed of 10 m/s. Find the maximum height. Take g = 10 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 10,
+    "angle": 90,
+    "g": 10
+   },
+   "rise": 5.0
+  },
+  {
+   "id": "A08",
+   "category": "straightforward",
+   "question": "An arrow is shot straight up at 50 m/s. Find the maximum height it reaches. Use g = 9.81 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 50,
+    "angle": 90,
+    "g": 9.81
+   },
+   "rise": 127.420999
+  },
+  {
+   "id": "A09",
+   "category": "straightforward",
+   "question": "A cannonball is fired with a velocity of 100 m/s at 45° to the ground. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 100,
+    "angle": 45
+   },
+   "rise": 255.102041
+  },
+  {
+   "id": "A10",
+   "category": "straightforward",
+   "question": "A ball is projected at 20 m/s making an angle of 30° with the horizontal. Find the maximum height reached.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 30
+   },
+   "rise": 5.102041
+  },
+  {
+   "id": "A11",
+   "category": "straightforward",
+   "question": "A tennis ball is hit straight upward at 8 m/s. Find the highest point it reaches above where it was hit.",
+   "expect": "solvable",
+   "given": {
+    "u": 8,
+    "angle": 90
+   },
+   "rise": 3.265306
+  },
+  {
+   "id": "A12",
+   "category": "straightforward",
+   "question": "A stone is thrown vertically up from the ground with a speed of 30 m/s. Find the maximum height. g = 10 m/s²",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 90,
+    "g": 10
+   },
+   "rise": 45.0
+  },
+  {
+   "id": "A13",
+   "category": "straightforward",
+   "question": "A particle is projected with speed 50 m/s at 37° above the horizontal. Find the maximum height. (Take g = 10 m/s²)",
+   "expect": "solvable",
+   "given": {
+    "u": 50,
+    "angle": 37,
+    "g": 10
+   },
+   "rise": 45.272665
+  },
+  {
+   "id": "A14",
+   "category": "straightforward",
+   "question": "A ball is thrown straight upward with an initial speed of 24.5 m/s. Determine the maximum height. g = 9.8 m/s^2",
+   "expect": "solvable",
+   "given": {
+    "u": 24.5,
+    "angle": 90
+   },
+   "rise": 30.625
+  },
+  {
+   "id": "A15",
+   "category": "straightforward",
+   "question": "A body is thrown vertically upwards with velocity 20 m/s. What is the maximum height attained by it?",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "A16",
+   "category": "straightforward",
+   "question": "A golf ball is struck at 45 m/s at an angle of 40° to the horizontal. Calculate the maximum height of its path.",
+   "expect": "solvable",
+   "given": {
+    "u": 45,
+    "angle": 40
+   },
+   "rise": 42.687817
+  },
+  {
+   "id": "A17",
+   "category": "straightforward",
+   "question": "A ball is launched at 15 m/s at an angle of 50 degrees from the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 50
+   },
+   "rise": 6.736501
+  },
+  {
+   "id": "A18",
+   "category": "straightforward",
+   "question": "A rubber ball is thrown upwards at 6 m/s. How high will it rise?",
+   "expect": "solvable",
+   "given": {
+    "u": 6,
+    "angle": 90
+   },
+   "rise": 1.836735
+  },
+  {
+   "id": "A19",
+   "category": "straightforward",
+   "question": "A coin is tossed straight up with a speed of 4.9 m/s. What maximum height does it reach?",
+   "expect": "solvable",
+   "given": {
+    "u": 4.9,
+    "angle": 90
+   },
+   "rise": 1.225
+  },
+  {
+   "id": "A20",
+   "category": "straightforward",
+   "question": "A projectile is fired at an angle of 60° with a speed of 60 m/s. Find the maximum height. Take g as 10 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 60,
+    "angle": 60,
+    "g": 10
+   },
+   "rise": 135.0
+  },
+  {
+   "id": "A21",
+   "category": "straightforward",
+   "question": "A water jet leaves a nozzle pointing straight up at 14 m/s. How high does the water rise?",
+   "expect": "solvable",
+   "given": {
+    "u": 14,
+    "angle": 90
+   },
+   "rise": 10.0
+  },
+  {
+   "id": "A22",
+   "category": "straightforward",
+   "question": "A javelin is thrown at 28 m/s at 35° above the horizontal. Neglect air resistance. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 28,
+    "angle": 35
+   },
+   "rise": 13.159597
+  },
+  {
+   "id": "A23",
+   "category": "straightforward",
+   "question": "A ball is thrown upward at 25 m/s from the top of a cliff 40 m high. Find the maximum height above the ground.",
+   "expect": "solvable",
+   "given": {
+    "u": 25,
+    "angle": 90,
+    "h0": 40
+   },
+   "rise": 31.887755,
+   "above_ground": 71.887755
+  },
+  {
+   "id": "A24",
+   "category": "straightforward",
+   "question": "A stone is thrown vertically upwards at 18 m/s from a bridge 12 m above the river. Find the maximum height reached above the river.",
+   "expect": "solvable",
+   "given": {
+    "u": 18,
+    "angle": 90,
+    "h0": 12
+   },
+   "rise": 16.530612,
+   "above_ground": 28.530612
+  },
+  {
+   "id": "A25",
+   "category": "straightforward",
+   "question": "A ball is projected at 30 m/s at 30° to the horizontal from the top of a tower 20 m high. Find the maximum height above the ground.",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 30,
+    "h0": 20
+   },
+   "rise": 11.479592,
+   "above_ground": 31.479592
+  },
+  {
+   "id": "A26",
+   "category": "straightforward",
+   "question": "A ball is thrown up at 20 m/s. Find the maximum height reached. Take g = 9.8 m/s².",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "A27",
+   "category": "straightforward",
+   "question": "The initial vertical velocity of a projectile is 16 m/s. Find the maximum height it reaches.",
+   "expect": "solvable",
+   "given": {
+    "uy": 16
+   },
+   "rise": 13.061224
+  },
+  {
+   "id": "A28",
+   "category": "straightforward",
+   "question": "A ball is kicked with a speed of 22 m/s at 25° to the horizontal. What is the greatest height reached by the ball?",
+   "expect": "solvable",
+   "given": {
+    "u": 22,
+    "angle": 25
+   },
+   "rise": 4.41048
+  },
+  {
+   "id": "A29",
+   "category": "straightforward",
+   "question": "A ball thrown vertically upward takes 2 s to reach its highest point. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "t_top": 2
+   },
+   "rise": 19.6
+  },
+  {
+   "id": "A30",
+   "category": "straightforward",
+   "question": "A pebble is flicked straight up at 3 m/s. Find its maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 3,
+    "angle": 90
+   },
+   "rise": 0.459184
+  },
+  {
+   "id": "B01",
+   "category": "units_and_angles",
+   "question": "A ball is thrown vertically upward at 36 km/h. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 10,
+    "angle": 90
+   },
+   "rise": 5.102041
+  },
+  {
+   "id": "B02",
+   "category": "units_and_angles",
+   "question": "A ball is thrown straight up at 90 km/h. Find the maximum height. g = 10 m/s²",
+   "expect": "solvable",
+   "given": {
+    "u": 25,
+    "angle": 90,
+    "g": 10
+   },
+   "rise": 31.25
+  },
+  {
+   "id": "B03",
+   "category": "units_and_angles",
+   "question": "A ball is thrown upwards with a speed of 500 cm/s. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 5,
+    "angle": 90
+   },
+   "rise": 1.27551
+  },
+  {
+   "id": "B04",
+   "category": "units_and_angles",
+   "question": "A projectile is launched at 72 km/h at 30° to the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 30
+   },
+   "rise": 5.102041
+  },
+  {
+   "id": "B05",
+   "category": "units_and_angles",
+   "question": "A ball is thrown at 20 m/s at 60° to the vertical. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 30
+   },
+   "rise": 5.102041
+  },
+  {
+   "id": "B06",
+   "category": "units_and_angles",
+   "question": "A ball is thrown at 20 m/s making an angle of 30° with the vertical. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 60
+   },
+   "rise": 15.306122
+  },
+  {
+   "id": "B07",
+   "category": "units_and_angles",
+   "question": "A projectile is fired at 40 m/s at an angle of π/4 radians to the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 40,
+    "angle": 45
+   },
+   "rise": 40.816327
+  },
+  {
+   "id": "B08",
+   "category": "units_and_angles",
+   "question": "A projectile is launched at 30 m/s at an angle of π/3 with the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 60
+   },
+   "rise": 34.438776
+  },
+  {
+   "id": "B09",
+   "category": "units_and_angles",
+   "question": "A ball is thrown at 25 m/s at an angle of 0.5 rad above the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 25,
+    "angle": 28.6478897565
+   },
+   "rise": 7.329364
+  },
+  {
+   "id": "B10",
+   "category": "units_and_angles",
+   "question": "A ball is thrown straight up at 45 mph. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20.1168,
+    "angle": 90
+   },
+   "rise": 20.647227
+  },
+  {
+   "id": "B11",
+   "category": "units_and_angles",
+   "question": "A ball is thrown vertically upward at 32 ft/s. Find the maximum height in metres.",
+   "expect": "solvable",
+   "given": {
+    "u": 9.7536,
+    "angle": 90
+   },
+   "rise": 4.85371
+  },
+  {
+   "id": "B12",
+   "category": "units_and_angles",
+   "question": "A ball is projected upward with speed 20 m s^-1. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "B13",
+   "category": "units_and_angles",
+   "question": "A ball is thrown up at 20 ms^-1. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "B14",
+   "category": "units_and_angles",
+   "question": "A stone is thrown straight up at 20 m/sec. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "B15",
+   "category": "units_and_angles",
+   "question": "A ball is thrown upward at 20 metres per second. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "B16",
+   "category": "units_and_angles",
+   "question": "A ball is thrown upward at 20 meters per second. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "B17",
+   "category": "units_and_angles",
+   "question": "A ball is thrown straight up at 54 km/hr. Find the maximum height. Take g = 10 m/s²",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 90,
+    "g": 10
+   },
+   "rise": 11.25
+  },
+  {
+   "id": "B18",
+   "category": "units_and_angles",
+   "question": "A ball is thrown at 30 m/s at an elevation of 60°. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 60
+   },
+   "rise": 34.438776
+  },
+  {
+   "id": "B19",
+   "category": "units_and_angles",
+   "question": "A ball is thrown at 30 m/s, 60 degrees above horizontal. Find the max height.",
+   "expect": "solvable",
+   "given": {
+    "u": 30,
+    "angle": 60
+   },
+   "rise": 34.438776
+  },
+  {
+   "id": "B20",
+   "category": "units_and_angles",
+   "question": "A ball is thrown straight up at 20 m/s on the Moon, where g = 1.62 m/s². Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90,
+    "g": 1.62
+   },
+   "rise": 123.45679
+  },
+  {
+   "id": "B21",
+   "category": "units_and_angles",
+   "question": "On Mars (g = 3.71 m/s²) a rock is thrown vertically upward at 10 m/s. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 10,
+    "angle": 90,
+    "g": 3.71
+   },
+   "rise": 13.477089
+  },
+  {
+   "id": "B22",
+   "category": "units_and_angles",
+   "question": "A ball is thrown upward at 1200 cm/s from a window 250 cm above the ground. Find the maximum height above the ground.",
+   "expect": "solvable",
+   "given": {
+    "u": 12,
+    "angle": 90,
+    "h0": 2.5
+   },
+   "rise": 7.346939,
+   "above_ground": 9.846939
+  },
+  {
+   "id": "B23",
+   "category": "units_and_angles",
+   "question": "A ball is thrown straight up at 15 m/s from a 0.5 km high cliff. Find the maximum height above the ground.",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 90,
+    "h0": 500
+   },
+   "rise": 11.479592,
+   "above_ground": 511.479592
+  },
+  {
+   "id": "B24",
+   "category": "units_and_angles",
+   "question": "A projectile is fired at 200 m/s at 15° above the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 200,
+    "angle": 15
+   },
+   "rise": 136.708772
+  },
+  {
+   "id": "B25",
+   "category": "units_and_angles",
+   "question": "A ball is thrown at 10 m/s at 89° to the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 10,
+    "angle": 89
+   },
+   "rise": 5.100487
+  },
+  {
+   "id": "B26",
+   "category": "units_and_angles",
+   "question": "A ball is thrown at 10 m/s at an angle of 45.5° above the horizontal. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 10,
+    "angle": 45.5
+   },
+   "rise": 2.595542
+  },
+  {
+   "id": "B27",
+   "category": "units_and_angles",
+   "question": "A ball is thrown vertically upwards with velocity 20 m/s. Find the maximum height. Take g = 9.8 N/kg.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "B28",
+   "category": "units_and_angles",
+   "question": "A ball is thrown upward at 0.02 km/s. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 90
+   },
+   "rise": 20.408163
+  },
+  {
+   "id": "B29",
+   "category": "units_and_angles",
+   "question": "A ball's initial velocity is 20 m/s, directed 30° above the horizontal. What is the maximum height?",
+   "expect": "solvable",
+   "given": {
+    "u": 20,
+    "angle": 30
+   },
+   "rise": 5.102041
+  },
+  {
+   "id": "B30",
+   "category": "units_and_angles",
+   "question": "A ball is thrown upward with a speed of 1.5 × 10^1 m/s. Find the maximum height.",
+   "expect": "solvable",
+   "given": {
+    "u": 15,
+    "angle": 90
+   },
+   "rise": 11.479592
+  },
+  {
+   "id": "C01",
+   "category": "ambiguous",
+   "question": "A ball is thrown at 25 m/s. Find the maximum height.",
+   "expect": "unclear",
+   "why": "no direction: up, down or sideways changes the answer"
+  },
+  {
+   "id": "C02",
+   "category": "ambiguous",
+   "question": "A ball is thrown upward. Find the maximum height.",
+   "expect": "unclear",
+   "why": "no speed"
+  },
+  {
+   "id": "C03",
+   "category": "ambiguous",
+   "question": "A projectile is launched at 30 m/s at an angle. Find the maximum height.",
+   "expect": "unclear",
+   "why": "the angle's size is missing"
+  },
+  {
+   "id": "C04",
+   "category": "ambiguous",
+   "question": "A ball is thrown upward at 20. Find the maximum height.",
+   "expect": "unclear",
+   "why": "no unit on the speed"
+  },
+  {
+   "id": "C05",
+   "category": "ambiguous",
+   "question": "A ball is thrown at 20 m/s at 30° below the horizontal. Find the maximum height.",
+   "expect": "unclear",
+   "why": "thrown downward: it never rises, so the question needs checking"
+  },
+  {
+   "id": "C06",
+   "category": "ambiguous",
+   "question": "A stone is thrown vertically at 15 m/s. Find the maximum height.",
+   "expect": "unclear",
+   "why": "'vertically' could be up or down"
+  },
+  {
+   "id": "C07",
+   "category": "ambiguous",
+   "question": "A ball is thrown up at 20 m/s on the Moon. Find the maximum height.",
+   "expect": "unclear",
+   "why": "on the Moon but no g given"
+  },
+  {
+   "id": "C08",
+   "category": "ambiguous",
+   "question": "A ball is thrown up at 20 m/s. Find the maximum height. Take g = 10 m/s². Use g = 9.8 m/s².",
+   "expect": "unclear",
+   "why": "two different values of g"
+  },
+  {
+   "id": "C09",
+   "category": "ambiguous",
+   "question": "A ball is thrown up at 20 m/s and reaches its highest point after 5 s. Find the maximum height.",
+   "expect": "unclear",
+   "why": "20 m/s needs about 2 s to stop, not 5 s"
+  },
+  {
+   "id": "C10",
+   "category": "ambiguous",
+   "question": "A ball is thrown vertically upward at 20 m/s at 30° to the horizontal. Find the maximum height.",
+   "expect": "unclear",
+   "why": "'vertically' contradicts the 30° angle"
+  },
+  {
+   "id": "C11",
+   "category": "ambiguous",
+   "question": "A ball is thrown up at 20 ms. Find the maximum height.",
+   "expect": "unclear",
+   "why": "'ms' could be milliseconds or a mistyped m/s"
+  },
+  {
+   "id": "C12",
+   "category": "ambiguous",
+   "question": "A ball is thrown up at 20 m/s or 25 m/s. Find the maximum height.",
+   "expect": "unclear",
+   "why": "two different speeds"
+  },
+  {
+   "id": "C13",
+   "category": "ambiguous",
+   "question": "A ball is thrown upward at 20 m/s from a height. Find the maximum height above the ground.",
+   "expect": "unclear",
+   "why": "launch height asked about but not given"
+  },
+  {
+   "id": "C14",
+   "category": "ambiguous",
+   "question": "A ball is thrown up at about 20-25 m/s. Find the maximum height.",
+   "expect": "unclear",
+   "why": "a range of speeds, not one value"
+  },
+  {
+   "id": "C15",
+   "category": "ambiguous",
+   "question": "A ball is thrown at an angle of 40° to the horizontal. Find the maximum height.",
+   "expect": "unclear",
+   "why": "no speed"
+  },
+  {
+   "id": "C16",
+   "category": "ambiguous",
+   "question": "A ball is thrown upward at twenty metres per second. Find the maximum height.",
+   "expect": "unclear",
+   "why": "the number is in words; must not be guessed"
+  },
+  {
+   "id": "C17",
+   "category": "ambiguous",
+   "question": "A ball is thrown up at 15 m/s from the bottom of a 20 m deep pit. Find the maximum height.",
+   "expect": "unclear",
+   "why": "height measured from where: the pit floor or the ground?"
+  },
+  {
+   "id": "C18",
+   "category": "ambiguous",
+   "question": "A ball is thrown at 20 m/s at 30 degrees. Its vertical velocity is 15 m/s. Find the maximum height.",
+   "expect": "unclear",
+   "why": "20 sin 30° = 10 m/s contradicts 15 m/s"
+  },
+  {
+   "id": "C19",
+   "category": "ambiguous",
+   "question": "A ball is thrown up with speed v. Find the maximum height.",
+   "expect": "unclear",
+   "why": "symbolic: no number to calculate (an AI explanation of v²/2g is also fine)",
+   "also_fine": [
+    "not_mine"
+   ]
+  },
+  {
+   "id": "C20",
+   "category": "ambiguous",
+   "question": "A ball is thrown upward at 20 km. Find the maximum height.",
+   "expect": "unclear",
+   "why": "20 km is a distance, not a speed"
+  },
+  {
+   "id": "D01",
+   "category": "outside",
+   "question": "A ball is thrown up at 20 m/s. Find the time to reach the maximum height.",
+   "expect": "not_mine",
+   "why": "asks for a time, not the height"
+  },
+  {
+   "id": "D02",
+   "category": "outside",
+   "question": "A projectile is fired at 30 m/s at 45°. Find its horizontal range.",
+   "expect": "not_mine",
+   "why": "asks for the range"
+  },
+  {
+   "id": "D03",
+   "category": "outside",
+   "question": "A ball is thrown up at 20 m/s. How long is it in the air?",
+   "expect": "not_mine",
+   "why": "asks for time of flight"
+  },
+  {
+   "id": "D04",
+   "category": "outside",
+   "question": "A ball is dropped from a height of 45 m. Find the time it takes to hit the ground.",
+   "expect": "not_mine",
+   "why": "falling, asks for a time"
+  },
+  {
+   "id": "D05",
+   "category": "outside",
+   "question": "A car accelerates from rest at 2 m/s² for 10 s. How far does it travel?",
+   "expect": "not_mine",
+   "why": "straight-line motion, not a launch"
+  },
+  {
+   "id": "D06",
+   "category": "outside",
+   "question": "What is Newton's second law?",
+   "expect": "not_mine",
+   "why": "concept question"
+  },
+  {
+   "id": "D07",
+   "category": "outside",
+   "question": "Explain why the sky is blue.",
+   "expect": "not_mine",
+   "why": "not mechanics"
+  },
+  {
+   "id": "D08",
+   "category": "outside",
+   "question": "A 2 kg mass is attached to a spring of constant 200 N/m. Find the period of oscillation.",
+   "expect": "not_mine",
+   "why": "spring oscillation"
+  },
+  {
+   "id": "D09",
+   "category": "outside",
+   "question": "A ball is thrown upward at 20 m/s in air with drag coefficient 0.1. Find the maximum height.",
+   "expect": "not_mine",
+   "why": "air resistance changes the answer"
+  },
+  {
+   "id": "D10",
+   "category": "outside",
+   "question": "A rocket accelerates upward at 15 m/s² for 4 s and then its engine stops. Find the maximum height.",
+   "expect": "not_mine",
+   "why": "powered flight first"
+  },
+  {
+   "id": "D11",
+   "category": "outside",
+   "question": "A ball rolls up a frictionless incline at 5 m/s. How far up the slope does it go?",
+   "expect": "not_mine",
+   "why": "incline"
+  },
+  {
+   "id": "D12",
+   "category": "outside",
+   "question": "A pendulum of length 1 m is released from 30°. Find its speed at the lowest point.",
+   "expect": "not_mine",
+   "why": "pendulum"
+  },
+  {
+   "id": "D13",
+   "category": "outside",
+   "question": "Two balls are thrown up at 10 m/s and 20 m/s. Find the difference in their maximum heights.",
+   "expect": "not_mine",
+   "why": "two objects"
+  },
+  {
+   "id": "D14",
+   "category": "outside",
+   "question": "A ball is thrown up at 20 m/s inside a lift moving up at 5 m/s. Find the maximum height reached relative to the lift.",
+   "expect": "not_mine",
+   "why": "moving frame"
+  },
+  {
+   "id": "D15",
+   "category": "outside",
+   "question": "A ball is thrown up at 20 m/s. Find the maximum height and its speed at half that height.",
+   "expect": "not_mine",
+   "why": "asks for a second quantity too"
+  },
+  {
+   "id": "D16",
+   "category": "outside",
+   "question": "A ball reaches a maximum height of 20 m. Find its initial speed.",
+   "expect": "not_mine",
+   "why": "inverse question: the height is given"
+  },
+  {
+   "id": "D17",
+   "category": "outside",
+   "question": "An electron is fired upward at 2 × 10^6 m/s in an electric field. Find the maximum height.",
+   "expect": "not_mine",
+   "why": "electric force, not just gravity"
+  },
+  {
+   "id": "D18",
+   "category": "outside",
+   "question": "A ball bounces off the floor and rises to 2 m. Find the speed at which it left the floor.",
+   "expect": "not_mine",
+   "why": "bounce, inverse"
+  },
+  {
+   "id": "D19",
+   "category": "outside",
+   "question": "Calculate the resistance of a wire carrying 2 A at 10 V.",
+   "expect": "not_mine",
+   "why": "electricity"
+  },
+  {
+   "id": "D20",
+   "category": "outside",
+   "question": "A projectile is fired at 50 m/s at 30°. Find the maximum height and the range.",
+   "expect": "not_mine",
+   "why": "asks for the range too"
+  }
+ ]
+}
