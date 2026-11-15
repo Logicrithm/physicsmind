@@ -71,6 +71,32 @@ In Supabase **Table Editor → response_feedback**, sort by `created_at`. Filter
 complaints. `response_type` says which part answered (`solver`, `clarification`, `ai_tutor`, `ai_unavailable`
 or `ai_limit`), and `app_version` says which release gave the answer.
 
+## Security checklist
+What protects the app, and what you must keep doing:
+
+- **Keep the GitHub repository private.** Settings → General → Danger Zone → Change visibility → Private.
+  The code has no keys in it, but a private repo also keeps your history and plans to yourself.
+- **Turn on two-factor sign-in for GitHub** (Settings → Password and authentication). Streamlit and Supabase
+  can be signed into through GitHub, so your GitHub account protects all three.
+- **Never add a payment card to Groq or OpenRouter.** On free plans a leaked key can only use up free answers;
+  it can never cost money.
+- **Keys live in two places only:** `.env` on this computer and the Streamlit Secrets page. Never paste a key into
+  a chat, an issue, a screenshot, or a file in the repository.
+- **If a key ever leaks:** delete it on the provider's site (Groq → API Keys, OpenRouter → Keys, or Supabase →
+  API Keys), create a new one, and paste the new one into `.env` and the Secrets page. Nothing in the code changes.
+- **Supabase:** give the app only the publishable key. The setup script lets that key add feedback rows and
+  nothing else, so even someone holding it cannot read, change or delete feedback. Never use the
+  `service_role` / secret key anywhere in PhysicsMind.
+
+Built into the app:
+- Questions over 1,500 characters are refused before anything runs. Each visit may ask 10 AI questions and send
+  40 pieces of feedback. Long text is cut before it is stored.
+- Visitors never see error details, code or file paths. The developer menu is hidden.
+- Text from visitors and from the AI is shown as plain formatted text, never as HTML.
+- Keys never reach the browser, and technical errors are logged with keys removed.
+- Keys set in Windows for other projects are ignored.
+- The live site installs exact, tested library versions (`requirements.txt`).
+
 ## Limits to know about
 - **AI answers are shared.** Groq's free plan allows 1,000 answers a day on `openai/gpt-oss-120b` (and 8,000 tokens a
   minute, so a burst of long answers can briefly spill over to OpenRouter), and OpenRouter's free models 50 a day
