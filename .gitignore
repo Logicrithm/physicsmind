@@ -30,3 +30,6 @@ physicsmind.db
 .idea/
 .DS_Store
 Thumbs.db
+
+# Backups of the feedback file made before a change
+*.backup-*

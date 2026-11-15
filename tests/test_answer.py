@@ -1,5 +1,6 @@
 """Who answers: the checked solver, a clarification, or the AI tutor. The AI is always replaced here."""
-from physicsmind.answer import AI_TUTOR, AI_UNAVAILABLE, CLARIFICATION, SOLVER, make_answer
+from physicsmind.answer import AI_LIMIT, AI_TUTOR, AI_UNAVAILABLE, CLARIFICATION, SOLVER, make_answer
+from physicsmind.tutor import FAILED, LIMIT_REACHED, NOT_CONFIGURED
 
 
 class FakeTutor:
@@ -67,6 +68,44 @@ def test_a_height_question_the_solver_cannot_handle_says_why_before_the_ai_answe
 
 
 def test_without_an_ai_key_the_reply_says_so():
-    answer = make_answer("Why is the sky blue?", FakeTutor((None, None, "AI tutor is not configured yet.")))
+    answer = make_answer("Why is the sky blue?", FakeTutor((None, None, NOT_CONFIGURED)))
     assert answer.response_type == AI_UNAVAILABLE
-    assert "OpenRouter API key" in answer.text
+    assert "isn't connected" in answer.text and "Groq or OpenRouter" in answer.text
+    assert not answer.used_ai  # nothing was spent
+
+
+def test_when_the_free_ai_is_used_up_the_reply_says_so_plainly():
+    answer = make_answer("Why is the sky blue?", FakeTutor((None, None, LIMIT_REACHED)))
+    assert answer.response_type == AI_UNAVAILABLE and answer.used_ai
+    assert "used up its answers" in answer.text and "maximum-height questions still work" in answer.text
+    assert "429" not in answer.text and "Error" not in answer.text
+
+
+def test_any_other_ai_failure_gets_a_try_again_message():
+    answer = make_answer("Why is the sky blue?", FakeTutor((None, None, FAILED)))
+    assert "couldn't be reached" in answer.text
+
+
+def test_once_the_visit_allowance_is_used_the_ai_is_not_called():
+    tutor = FakeTutor()
+    answer = make_answer("Why is the sky blue?", tutor, ai_allowed=False)
+    assert answer.response_type == AI_LIMIT and not answer.used_ai
+    assert tutor.questions == []
+    assert "AI-tutor questions for this visit" in answer.text
+
+
+def test_the_checked_solver_still_answers_after_the_allowance_is_used():
+    answer = make_answer("A ball is thrown up at 72 km/h. Find the maximum height.", FakeTutor(), ai_allowed=False)
+    assert answer.response_type == SOLVER and "20.41 m" in answer.text and not answer.used_ai
+
+
+def test_an_ai_answer_counts_towards_the_allowance():
+    assert make_answer("Why is the sky blue?", FakeTutor()).used_ai
+
+
+def test_ai_maths_is_turned_into_the_form_streamlit_renders():
+    reply = (r"Voltage \(V\) is in volts, \(\mathrm{J\,C^{-1}}\)." "\n\n" r"\[ V = IR \]" "\n\n"
+             r"Already fine: $I$ and a price of 5 dollars.")
+    answer = make_answer("Explain voltage.", FakeTutor((reply, "test-model", None)))
+    assert answer.text == (r"Voltage $V$ is in volts, $\mathrm{J\,C^{-1}}$." "\n\n" "$$V = IR$$" "\n\n"
+                           "Already fine: $I$ and a price of 5 dollars.")

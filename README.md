@@ -8,8 +8,10 @@ A friendly, chat-style physics learning prototype for Windows.
 - Checked answers to maximum-height questions: a question reader converts units (km/h, cm/s, degrees, radians...),
   works out what each number means, checks the formula applies, and SymPy plus the direct formula must agree.
   When a question is unclear it asks instead of guessing.
-- Optional OpenRouter AI tutor for general physics questions.
-- Feedback after each assistant response, saved locally in SQLite.
+- Optional free AI tutor for general physics questions: Groq first, OpenRouter as the second choice, with a
+  per-visit allowance so the free daily answers last. It is labelled unchecked.
+- Feedback after each answer, saved with the part that answered and the app version: in SQLite on this
+  computer, or in a Supabase table when the app is online.
 - No local GPU or local LLM required.
 
 ## Setup (Windows PowerShell)
@@ -30,13 +32,17 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
 ## Enable AI chat (optional)
-1. Create a free API key at https://openrouter.ai/keys
-2. Copy `.env.example` to `.env`
-3. Add your key after `OPENROUTER_API_KEY=`
-4. Keep `OPENROUTER_MODEL=openrouter/free`
-5. Restart Streamlit
+1. Create a free key at https://console.groq.com/keys (about 1,000 answers a day) and/or
+   https://openrouter.ai/keys (50 a day).
+2. Copy `.env.example` to `.env` and add the key(s) after `GROQ_API_KEY=` / `OPENROUTER_API_KEY=`.
+   A `GROQ_API_KEY` set as a Windows environment variable is also picked up.
+3. Restart Streamlit.
 
 No paid fallback is configured. Free-model availability and quotas can change.
+
+## Put it online
+See [DEPLOY.md](DEPLOY.md): Streamlit Community Cloud for the app, Supabase for feedback, `main` = live,
+`dev` = work in progress.
 
 ## Run the tests
 ```powershell
@@ -44,7 +50,8 @@ python -m pytest -q
 ```
 
 ## Current limitations
-- General chat requires the optional API key.
+- General chat requires a free AI key. Each visit may ask `AI_QUESTIONS_PER_VISIT` AI questions (default 10);
+  reloading the page starts a new visit, so this slows heavy use rather than stopping it.
 - The checked solver answers only maximum-height questions (one object in free flight, straight up or at an angle,
   from the ground or a raised point). Everything else goes to the AI tutor and is labelled unchecked.
 - Other numerical problems are not yet automatically parsed into solver inputs.

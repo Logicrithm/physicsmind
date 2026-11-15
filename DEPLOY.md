@@ -1,0 +1,73 @@
+# Putting PhysicsMind online
+
+Everything here is free. The app runs on Streamlit Community Cloud, feedback is saved in a Supabase table, and the
+AI tutor uses free Groq and OpenRouter keys. Keys go only into the host's Secrets page, never into GitHub.
+
+## How versions work
+- `main` is the live version. Streamlit rebuilds the site by itself a minute or so after `main` changes.
+- `dev` is where work happens. A change moves to `main` only after `python -m pytest -q` passes (and, once it
+  exists, the evaluation set), so testers never see half-finished work.
+- Every feedback row stores the app version that gave the answer (the number in `physicsmind/__init__.py`,
+  plus the git commit when the host has it). Raise that number with each release to `main`.
+
+## One-time setup (about 15 minutes)
+
+### 1. GitHub repository
+Create an empty **private** repository at https://github.com/new, named `physicsmind`. Don't add a README,
+`.gitignore` or licence. The code is then pushed to it from this folder.
+
+### 2. Supabase (where online feedback is kept)
+1. Sign in at https://supabase.com (signing in with GitHub works) and create a **New project**. Pick the region
+   nearest your testers (for India: Mumbai). Keep the database password somewhere safe; the app does not need it.
+2. Open **SQL Editor**, then **New query**. Paste all of `deploy/supabase_feedback.sql`, then click **Run**.
+   The result should say "Success. No rows returned".
+3. Open **Project Settings → API Keys**. Copy the **Project URL** and the **publishable** key (it starts with
+   `sb_publishable_`; on older projects it is called the `anon` key). Do **not** use the secret / service_role key:
+   the app only needs to add feedback, and the setup script allows that key nothing else.
+
+Free Supabase projects pause after a week with no activity. If testing stops for a while, open the project in
+the dashboard and press **Restore** before sharing the link again. While a project is paused the app tells
+the tester their feedback wasn't saved instead of losing it silently.
+
+### 3. Groq key (more free AI answers)
+Sign in at https://console.groq.com, open **API Keys**, then **Create API Key**. No card is needed. Your existing
+OpenRouter key stays as the second choice.
+
+### 4. Streamlit Community Cloud
+1. Sign in at https://share.streamlit.io with GitHub and allow it to see the `physicsmind` repository.
+2. **Create app** → **Deploy a public app from GitHub**. Repository `<your-user>/physicsmind`, branch `main`,
+   main file `app.py`. Choose a link name, for example `physicsmind`.
+3. Open **Advanced settings**: choose **Python 3.11**, and paste this into **Secrets**, with your own values:
+
+   ```toml
+   GROQ_API_KEY = "gsk_..."
+   GROQ_MODEL = "openai/gpt-oss-120b"
+   OPENROUTER_API_KEY = "sk-or-..."
+   OPENROUTER_MODEL = "openrouter/free"
+   AI_QUESTIONS_PER_VISIT = "10"
+   SUPABASE_URL = "https://<your-project>.supabase.co"
+   SUPABASE_KEY = "sb_publishable_..."
+   ```
+4. Click **Deploy**. The first build takes a few minutes.
+
+### 5. Check it works
+1. Open the app's link. The sidebar should say "Feedback is saved online for review" and show the version.
+2. Tap **Solve a motion problem**. It should answer 20.41 m.
+3. Send feedback on that answer. In Supabase, open **Table Editor → response_feedback**; the row should be there.
+4. Ask a general question, such as "Why is the sky blue?". The caption under the answer should name the model
+   and "via Groq".
+
+## Reading the feedback
+In Supabase **Table Editor → response_feedback**, sort by `created_at`. Filter `rating = not_helpful` to see the
+complaints. `response_type` says which part answered (`solver`, `clarification`, `ai_tutor`, `ai_unavailable`
+or `ai_limit`), and `app_version` says which release gave the answer.
+
+## Limits to know about
+- **AI answers are shared.** Groq's free plan allows 1,000 answers a day on `openai/gpt-oss-120b` (and 8,000 tokens a
+  minute, so a burst of long answers can briefly spill over to OpenRouter), and OpenRouter's free models 50 a day
+  for the whole account. These are 15 Nov 2026 figures; providers change them. Each visit may ask
+  `AI_QUESTIONS_PER_VISIT` AI questions. Reloading the page starts a new visit, so this slows heavy use rather
+  than stopping it. Checked maximum-height answers and clarifications never use the AI.
+- **The app sleeps** after 12 hours with no visitors. The next visitor waits about a minute while it wakes.
+- **Testers' questions are stored.** The app asks them not to include personal details. It collects no names or
+  emails.

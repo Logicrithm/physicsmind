@@ -3,18 +3,34 @@
 1. The question reader checks whether the solver can answer it with certainty.
 2. Solvable: the solver answers, with every step, the quantities it read and its assumptions.
 3. Unclear: no number is given. The reply says exactly what is missing, and the AI is not called.
-4. Anything else goes to the AI tutor, labelled as unchecked.
+4. Anything else goes to the AI tutor, labelled as unchecked, unless this visit's AI questions are used up.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import re
 
 from .projectile import solve_max_height
 from .reader import NOT_MINE, SOLVABLE, UNCLEAR, Reading, _show, read_question
-from .tutor import ask_tutor
+from .tutor import LIMIT_REACHED, NOT_CONFIGURED, ask_tutor
 
 SOLVER, CLARIFICATION, AI_TUTOR, AI_UNAVAILABLE = "solver", "clarification", "ai_tutor", "ai_unavailable"
+AI_LIMIT = "ai_limit"  # this visitor has used their AI questions for the visit; the AI was not called
+
+SOLVER_STILL_WORKS = "Checked maximum-height questions still work, because they don't need the AI."
+UNAVAILABLE_TEXT = {
+    NOT_CONFIGURED: ("I'm ready to help! The AI tutor isn't connected yet, so I can't answer general physics questions "
+                     "here. " + SOLVER_STILL_WORKS + "\n\nTo connect it on your own computer, add a free Groq or OpenRouter "
+                     "API key to the `.env` file. See README.md."),
+    LIMIT_REACHED: ("The free AI tutor has used up its answers for now. Free AI plans allow only a limited number of "
+                    "answers a day, shared by everyone using PhysicsMind. " + SOLVER_STILL_WORKS +
+                    " Please try your question again later or tomorrow."),
+}
+FAILED_TEXT = ("The AI tutor couldn't be reached just now, so I can't answer this one. " + SOLVER_STILL_WORKS +
+               " Please try again in a minute.")
+AI_LIMIT_TEXT = ("You've used the AI-tutor questions for this visit; each visit gets a few so the free daily allowance "
+                 "lasts for everyone testing PhysicsMind. " + SOLVER_STILL_WORKS)
 
 
 @dataclass
@@ -23,9 +39,10 @@ class Answer:
     source: str          # shown under the answer
     response_type: str   # saved with feedback, so a wrong answer can be traced to the part that gave it
     verification: str
+    used_ai: bool = False  # the AI tutor was asked (it counts towards the visit's allowance)
 
 
-def make_answer(question: str, tutor=ask_tutor) -> Answer:
+def make_answer(question: str, tutor=ask_tutor, ai_allowed: bool = True) -> Answer:
     reading = read_question(question)
     if reading.status == SOLVABLE:
         solution = solve_max_height(reading)
@@ -41,13 +58,21 @@ def make_answer(question: str, tutor=ask_tutor) -> Answer:
     if reading.on_topic and reading.status == NOT_MINE:
         note = (f"*The checked solver doesn't answer this one because {reading.reasons[0]}. "
                 f"The AI tutor answers instead, and its numbers are not checked.*\n\n")
+    if not ai_allowed:
+        return Answer(note + AI_LIMIT_TEXT, "PhysicsMind", AI_LIMIT, "not answered: visit's AI questions used")
     answer, model, error = tutor(question)
     if error:
-        return Answer(note + "I’m ready to help! The AI tutor needs a free OpenRouter API key before it can answer general "
-                      "physics questions. The checked solver handles maximum-height questions without one.\n\n"
-                      "To enable chat, add your key to the local `.env` file. See README.md.",
-                      model or "Not connected", AI_UNAVAILABLE, "not verified")
-    return Answer(note + answer, model or "unknown", AI_TUTOR, "LLM response; not independently verified")
+        return Answer(note + UNAVAILABLE_TEXT.get(error, FAILED_TEXT), model or "Not connected", AI_UNAVAILABLE,
+                      "not answered: AI tutor unavailable", used_ai=error != NOT_CONFIGURED)
+    return Answer(note + streamlit_math(answer), model or "unknown", AI_TUTOR, "LLM response; not independently verified",
+                  used_ai=True)
+
+
+def streamlit_math(text: str) -> str:
+    r"""Many models write maths as \( ... \) and \[ ... \]. Streamlit only renders $ ... $ and $$ ... $$, so without
+    this a student sees "J C(^{-1})" instead of the formula (found in the running app on 15 Nov 2026)."""
+    text = re.sub(r"\\\[(.+?)\\\]", lambda m: f"$${m.group(1).strip()}$$", text, flags=re.S)
+    return re.sub(r"\\\((.+?)\\\)", lambda m: f"${m.group(1).strip()}$", text, flags=re.S)
 
 
 def clarify(reading: Reading) -> str:

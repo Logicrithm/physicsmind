@@ -3,10 +3,15 @@ import streamlit as st
 from dotenv import load_dotenv
 
 from physicsmind.answer import make_answer
-from physicsmind.feedback import init_db, save_feedback, feedback_count
+from physicsmind.config import whole_number
+from physicsmind.feedback import FeedbackNotSaved, choose_store
+from physicsmind.version import app_version
 
 load_dotenv(override=True)
-init_db()
+store = choose_store()  # Supabase when SUPABASE_URL and SUPABASE_KEY are set, else physicsmind.db on this computer
+VERSION = app_version()
+# Each visit may ask the AI tutor this many questions, so the free daily allowance lasts for every tester. 0 = AI off.
+AI_PER_VISIT = whole_number("AI_QUESTIONS_PER_VISIT", 10)
 
 st.set_page_config(
     page_title="PhysicsMind | Your Physics Buddy",
@@ -225,6 +230,8 @@ if "chat_id" not in st.session_state:
     st.session_state.chat_id = str(uuid.uuid4())
 if "feedback_done" not in st.session_state:
     st.session_state.feedback_done = set()
+if "ai_used" not in st.session_state:
+    st.session_state.ai_used = 0
 
 def start_new_chat():
     st.session_state.messages = []
@@ -251,8 +258,9 @@ with st.sidebar:
     st.markdown("#### 🧰 Study corner")
     st.markdown("📘 Formula explorer  \n🧪 Physics topics  \n🎯 Practice questions")
     st.markdown("---")
-    st.caption(f"💬 Feedback saved locally: {feedback_count()}")
-    st.caption("Phase 1 • Learning prototype")
+    saved = store.count()
+    st.caption(f"💬 Feedback saved on this computer: {saved}" if saved is not None else "💬 Feedback is saved online for review")
+    st.caption(f"Phase 1 • Learning prototype • version {VERSION}")
 
 # ---------- Main header ----------
 st.markdown("""
@@ -299,19 +307,24 @@ for index, message in enumerate(st.session_state.messages):
                     )
                     comment = st.text_input("Optional note", placeholder="What could we do better?")
                     if st.form_submit_button("Send feedback"):
-                        save_feedback(
-                            response_id=fid,
-                            response_type=message.get("response_type", "chat"),
-                            question=message.get("question", ""),
-                            answer=message["content"],
-                            rating="helpful" if rating.startswith("👍") else "not_helpful",
-                            issue_category=issue,
-                            comment=comment,
-                            model=message.get("model", ""),
-                            verification_status=message.get("verification", "")
-                        )
-                        st.session_state.feedback_done.add(fid)
-                        st.rerun()
+                        try:
+                            store.save(
+                                response_id=fid,
+                                response_type=message.get("response_type", "chat"),
+                                question=message.get("question", ""),
+                                answer=message["content"],
+                                rating="helpful" if rating.startswith("👍") else "not_helpful",
+                                issue_category=issue,
+                                comment=comment,
+                                model=message.get("model", ""),
+                                verification_status=message.get("verification", ""),
+                                app_version=message.get("app_version", VERSION),
+                            )
+                        except FeedbackNotSaved as problem:
+                            st.error(f"Sorry, your feedback wasn't saved because {problem}. Please try sending it again.")
+                        else:
+                            st.session_state.feedback_done.add(fid)
+                            st.rerun()
             else:
                 st.caption("💚 Thanks — feedback saved!")
 
@@ -327,10 +340,13 @@ if user_prompt:
         st.markdown(user_prompt)
     with st.chat_message("assistant", avatar="⚛️"):
         with st.spinner("Thinking it through… ✨"):
-            answer = make_answer(user_prompt)
+            answer = make_answer(user_prompt, ai_allowed=st.session_state.ai_used < AI_PER_VISIT)
+        if answer.used_ai:
+            st.session_state.ai_used += 1
         st.markdown(answer.text)
         st.caption(f"PhysicsMind • {answer.source} • {answer.verification}")
-        st.info("You can rate this answer below. Your feedback is saved locally for later review.")
+        st.info(f"You can rate this answer below. Questions, answers and feedback you send are saved {store.where} "
+                "to improve PhysicsMind, so please don't include personal details.")
     st.session_state.messages.append({
         "role": "assistant",
         "content": answer.text,
@@ -339,8 +355,11 @@ if user_prompt:
         "model": answer.source,
         "verification": answer.verification,
         "response_type": answer.response_type,
+        "app_version": VERSION,
     })
     st.rerun()
 
 if not st.session_state.messages:
     st.markdown('<p class="small-note">💡 Tip: There are no silly questions here. Ask “why?”, ask for an example, or ask us to explain it more simply.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="small-note">🔒 Questions and feedback you send are saved to improve PhysicsMind. '
+                'Please don’t include your name, contact details or anything personal.</p>', unsafe_allow_html=True)

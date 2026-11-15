@@ -4,13 +4,18 @@
 - ₹0 starting budget; free API quota only.
 - Windows, 8 GB RAM, no dedicated GPU.
 - Streamlit chat-first MVP.
-- OpenRouter optional free-model API; no paid fallback.
+- Free AI providers only, no paid fallback: Groq first (`openai/gpt-oss-120b`, 1,000 requests/day and 8,000
+  tokens/minute, read from Groq's headers on 15 Nov 2026), OpenRouter free models second (50/day).
 - SymPy for deterministic calculations.
 - SQLite feedback after each assistant response.
 - Never train automatically on raw feedback.
 - Token efficiency: deterministic code first, LLM only when needed.
 - A wrong number presented as checked is worse than no number: when the question reader is unsure, it asks instead of guessing (15 Nov 2026).
-- Git restore point: `b149334` (baseline, 14 Nov 2026). `.env` and `physicsmind.db` are never committed.
+- Git restore points: `b149334` (baseline, 14 Nov 2026), `f36985a` (question reader, 15 Nov 2026).
+  `.env` and `physicsmind.db` are never committed.
+- Online (15 Nov 2026): Streamlit Community Cloud from a private GitHub repo; `main` is live, `dev` is work in
+  progress, and a change reaches `main` only after the tests pass. Feedback goes to Supabase online, because the
+  host's disk is wiped on every restart. See DEPLOY.md.
 
 ## Current implementation
 - Friendly chat-style interface with session conversation history and three quick-start questions.
@@ -27,14 +32,25 @@
   and the direct formula h = u_y²/2g must agree before a number is shown.
 - **Answer routing** (`physicsmind/answer.py`): every answer is labelled solver, clarification, ai_tutor or
   ai_unavailable, and that label is saved with feedback.
-- Optional LLM tutor (OpenRouter) for everything else, labelled "not independently verified".
-- Per-answer feedback with issue category and optional comment, stored locally in SQLite.
+- **AI tutor** (`physicsmind/tutor.py`) for everything else, labelled "not independently verified": free providers
+  tried in order, each visit limited to `AI_QUESTIONS_PER_VISIT` questions, plain messages when the free answers
+  run out, and `\( \)` maths from the model converted so Streamlit renders it.
+- **Settings** (`physicsmind/config.py`) come from `.env` locally and from the host's Secrets page online.
+- **Version label** (`physicsmind/version.py`): release number plus git commit, shown in the sidebar and saved
+  with every piece of feedback.
+- Per-answer feedback with issue category, optional comment and app version: SQLite on this computer, Supabase
+  online (the app's key may only add rows). Testers are asked not to include personal details.
 
 ## Verified
-- 92 automated tests pass (15 Nov 2026), including the two wrong answers found on 14 Nov:
+- 115 automated tests pass (15 Nov 2026). No test can reach the real feedback file, the online database or an AI
+  provider (tests/conftest.py removes every key). They include the two wrong answers found on 14 Nov:
   30 m/s at 45° now gives 22.96 m (was 45.92 m) and 72 km/h now gives 20.41 m (was 264.49 m).
 - Checked in the running app: the starter question (20.41 m), both former failures, a raised launch
   (5.10 m above the launch point, 25.10 m above the ground) and an unclear question (asked which way it is thrown).
+- Checked in the running app after the online preparation: version label and privacy note shown, a real Groq answer
+  with its maths rendered (21 formulas, none left raw), the solver starter still 20.41 m, and the real feedback file
+  still holding its 2 rows (backup: physicsmind.db.backup-2026-11-15).
+- Not yet checked: the Supabase table and the deployed site itself; those need the accounts in DEPLOY.md.
 
 ## Limitations
 - The checked solver answers only maximum-height questions for one object in free flight. Time of flight, range,
