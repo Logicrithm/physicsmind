@@ -1,11 +1,8 @@
-import os
-import re
 import uuid
 import streamlit as st
 from dotenv import load_dotenv
 
-from physicsmind.solver import solve_kinematics
-from physicsmind.tutor import ask_tutor
+from physicsmind.answer import make_answer
 from physicsmind.feedback import init_db, save_feedback, feedback_count
 
 load_dotenv(override=True)
@@ -234,52 +231,6 @@ def start_new_chat():
     st.session_state.chat_id = str(uuid.uuid4())
     st.rerun()
 
-def try_vertical_motion(question: str):
-    """Small deterministic demo parser for a common maximum-height question."""
-    q = question.lower()
-    if not any(term in q for term in ("maximum height", "max height", "highest point")):
-        return None
-    velocity_match = re.search(r"(?:initial velocity|velocity|speed|u)\D{0,25}(-?\d+(?:\.\d+)?)\s*(?:m/s|ms-1)?", q)
-    gravity_match = re.search(r"(?:g\s*=?|gravity(?:\s*=?))\s*(9?\.?\d+(?:\.\d+)?)\s*(?:m/s(?:\^?2|²)|ms-2)?", q)
-    if not velocity_match:
-        velocity_match = re.search(r"(\d+(?:\.\d+)?)\s*m/s", q)
-    if not velocity_match:
-        return None
-    initial = float(velocity_match.group(1))
-    gravity = float(gravity_match.group(1)) if gravity_match else 9.8
-    if gravity <= 0:
-        return None
-    result = solve_kinematics({"u": initial, "v": 0, "a": -gravity}, "s")
-    if result["status"] != "solved":
-        return None
-    height = result["value"]
-    return (
-        "This is vertical motion under gravity. At the highest point, the object's "
-        "instantaneous velocity is zero.\n\n"
-        "We use the equation:\n\n"
-        r"\[v^2 = u^2 + 2as\]" + "\n\n"
-        f"**Given:**  u = {initial:g} m/s,  v = 0 m/s,  a = −{gravity:g} m/s²\n\n"
-        f"**Substitute:**  0 = ({initial:g})² + 2(−{gravity:g})s\n\n"
-        f"**Solve:**  s = {initial:g}² / (2 × {gravity:g})\n\n"
-        f"**Answer: {height:.3f} m**\n\n"
-        "This assumes constant gravitational acceleration and negligible air resistance."
-    ), "SymPy kinematics solver", "symbolic equation solve; assumptions stated"
-
-def make_answer(question):
-    parsed = try_vertical_motion(question)
-    if parsed:
-        answer, model, verification = parsed
-        return answer, model, verification, None
-    answer, model, error = ask_tutor(question)
-    if error:
-        return (
-            "I’m ready to help! The AI tutor needs a free OpenRouter API key before it can answer general physics questions. "
-            "The numerical solver can still handle its supported kinematics calculations.\n\n"
-            "To enable chat, add your key to the local `.env` file. See README.md.",
-            model or "Not connected", "not verified", None
-        )
-    return answer, model or "unknown", "LLM response; not independently verified", None
-
 # ---------- Sidebar ----------
 with st.sidebar:
     st.markdown("""
@@ -335,7 +286,7 @@ for index, message in enumerate(st.session_state.messages):
     with st.chat_message(message["role"], avatar="🧑‍🚀" if message["role"] == "user" else "⚛️"):
         st.markdown(message["content"])
         if message["role"] == "assistant":
-            st.caption(f"PhysicsMind • {message.get('model', 'AI')} ")
+            st.caption(f"PhysicsMind • {message.get('model', 'AI')} • {message.get('verification', 'not verified')}")
             fid = message.get("id", f"msg_{index}")
             if fid not in st.session_state.feedback_done:
                 with st.form(key=f"feedback_form_{fid}"):
@@ -350,7 +301,7 @@ for index, message in enumerate(st.session_state.messages):
                     if st.form_submit_button("Send feedback"):
                         save_feedback(
                             response_id=fid,
-                            response_type="chat",
+                            response_type=message.get("response_type", "chat"),
                             question=message.get("question", ""),
                             answer=message["content"],
                             rating="helpful" if rating.startswith("👍") else "not_helpful",
@@ -376,17 +327,18 @@ if user_prompt:
         st.markdown(user_prompt)
     with st.chat_message("assistant", avatar="⚛️"):
         with st.spinner("Thinking it through… ✨"):
-            answer, model, verification, _ = make_answer(user_prompt)
-        st.markdown(answer)
-        st.caption(f"PhysicsMind • {model}")
+            answer = make_answer(user_prompt)
+        st.markdown(answer.text)
+        st.caption(f"PhysicsMind • {answer.source} • {answer.verification}")
         st.info("You can rate this answer below. Your feedback is saved locally for later review.")
     st.session_state.messages.append({
         "role": "assistant",
-        "content": answer,
+        "content": answer.text,
         "id": str(uuid.uuid4()),
         "question": user_prompt,
-        "model": model,
-        "verification": verification,
+        "model": answer.source,
+        "verification": answer.verification,
+        "response_type": answer.response_type,
     })
     st.rerun()
 

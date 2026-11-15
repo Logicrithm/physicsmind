@@ -5,7 +5,9 @@ A friendly, chat-style physics learning prototype for Windows.
 ## Included
 - Chat-first Streamlit interface with colourful, student-friendly styling.
 - Quick starter questions and session chat history.
-- SymPy-powered answer for a narrow vertical maximum-height question pattern.
+- Checked answers to maximum-height questions: a question reader converts units (km/h, cm/s, degrees, radians...),
+  works out what each number means, checks the formula applies, and SymPy plus the direct formula must agree.
+  When a question is unclear it asks instead of guessing.
 - Optional OpenRouter AI tutor for general physics questions.
 - Feedback after each assistant response, saved locally in SQLite.
 - No local GPU or local LLM required.
@@ -36,12 +38,19 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 No paid fallback is configured. Free-model availability and quotas can change.
 
+## Run the tests
+```powershell
+python -m pytest -q
+```
+
 ## Current limitations
 - General chat requires the optional API key.
-- The built-in deterministic parser currently recognizes a narrow vertical maximum-height question pattern.
+- The checked solver answers only maximum-height questions (one object in free flight, straight up or at an angle,
+  from the ground or a raised point). Everything else goes to the AI tutor and is labelled unchecked.
 - Other numerical problems are not yet automatically parsed into solver inputs.
 - Feedback is stored locally and is not automatically used to train the model.
 - The current solver is not a complete physics verification engine.
 
 ## Next milestone
-Natural-language question extraction, formula applicability checks, broader topic coverage, and independently verified worked solutions.
+Extend the checked solver to the rest of projectile motion (time of flight, range) and to straight-line motion,
+reusing the same question reader. See PROJECT_STATUS.md.
