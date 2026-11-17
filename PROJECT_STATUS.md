@@ -96,6 +96,39 @@ How today's design fits, and what it will need:
   as a range calculation and asked for a launch speed. Questions that ask to derive, prove or explain a formula,
   without measured quantities, now go to the AI tutor (tests in tests/test_flight.py).
 
+## Feedback review and readable AI answers (0.4, 16-17 Nov 2026)
+- Feedback read from a CSV export he made (kept in his Downloads, never in the repo; the database was not touched).
+  4 rows: 2 from real testers, 1 setup check, 1 live test of our own. Both real reports were the same problem: AI
+  answers that could not be read (56 and 94 raw "$" signs as they saw them; one had lost a whole table). 0.3.1
+  already shows them with none; their AI answer texts are regression tests (tests/data/tester_report_*.md). No
+  wrong answers or feature requests were reported.
+- The deeper problem behind the reports: AI answers written like a reference book. Measured with
+  `python -m evals.readability` (10 student questions, calls the real AI, run by hand):
+
+  | | Median words | Median formulas | Tables | Headings | Ends with an offer |
+  |---|---|---|---|---|---|
+  | Before (0.3.1) | 326 | 26 | 1 | 5.5 | 1 of 10 |
+  | After (0.4) | 129 | 9 | 0 | 0 | 10 of 10 |
+
+  Reports: evals/readability-before-2026-11-17.md and evals/readability-after-2026-11-17.md. Maths drew correctly
+  in 10 of 10 both times.
+- What changed: new AI instructions (physicsmind/tutor.py) with two formats — an idea question starts with a plain
+  answer; a calculation starts with "Given:", then the formula with its symbols in words, numbered steps, and the
+  result once, in bold, at the end. Code now also fixes the AI's writing habits (answer.tidy_text): LaTeX quotes,
+  stray "*" bullets, and units like "m s⁻¹" written as "m/s". The feedback choices gained "Hard to read / looks
+  broken" and "Too long".
+- Found on the way (17 Nov 2026):
+  - With the first two drafts of the instructions, calculations still opened with a result, sometimes a wrong one
+    later corrected ("50 m" then 25 m; "75 W" then 300 W): 4 of 5 answers. With the two formats, 0 of 5; all five
+    results were right (300 W, 40 m, 9 J, 3 m/s², 270 kJ).
+  - One answer claimed Earth's gravity is stronger than Jupiter's (false). The instructions now allow comparisons of
+    real things only when the facts are certain; two re-asks gave correct figures (Mars 3.7 m/s²).
+  - "A car slows from 20 m/s to rest in 4 s. How far does it travel while stopping?" was read as a projectile range
+    question and asked which way the car is thrown. A time-of-flight or range question with nothing thrown or
+    launched now goes to the AI. The evaluation set stays 140 / 140; the 25 fresh wordings still give 0 wrong.
+- Still true: AI answers are not checked. They are shorter and clearer, but one in ten "why" explanations was still
+  loosely worded (kinetic energy), and answers vary from run to run.
+
 ## Evaluation set (15 Nov 2026)
 - 100 questions in `evals/questions.json`, written before PhysicsMind was run on them; expected heights worked out
   by hand and rechecked with plain arithmetic in `tests/test_eval.py`.
@@ -129,8 +162,8 @@ How today's design fits, and what it will need:
 - No image upload, broad RAG, simulations or adaptive learning yet. Conversation history is session-only.
 
 ## Next tasks
-1. Read testers' feedback in Supabase by response type; turn every wrong checked answer into a test and an
-   evaluation question.
+1. Keep reading testers' feedback (a CSV export) after each release; turn every wrong checked answer into a test
+   and an evaluation question, and re-run `python -m evals.readability` whenever the AI instructions change.
 2. Throws downward and drops (time to fall, range of a downward throw), then landing at another level.
 3. Straight-line constant-acceleration questions (the solver already supports u, v, a, s, t).
 4. Independent checking of AI tutor answers where a formula applies.

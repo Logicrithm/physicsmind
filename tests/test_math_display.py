@@ -4,6 +4,8 @@ aligned equations fail."""
 from pathlib import Path
 import re
 
+import pytest
+
 from physicsmind.answer import make_answer, streamlit_math
 
 # A real answer from the AI tutor (Groq, openai/gpt-oss-120b, 15 Nov 2026) that showed as raw symbols in the app.
@@ -78,3 +80,20 @@ def test_a_real_answer_with_numbered_and_aligned_equations_gets_proper_blocks():
     assert blocks_are_well_formed(converted)
     tagged = [line for line in converted.splitlines() if r"\tag" in line]
     assert tagged and all("$" not in line for line in tagged)  # each \tag sits inside a block, never inline
+
+
+# --- The two testers' reports of 15 Nov 2026 (the AI's answers only; the testers' questions and notes are not kept here).
+# Each file is the answer exactly as the tester saw it: already converted by the old code (0.2.0 and 0.2.2), which
+# left multi-line "$$" formulas. In a Streamlit page these showed 56 and 94 raw "$" signs, and the second lost a whole
+# table; through today's converter they showed none, with every formula and table drawn.
+TESTER_REPORTS = ("tester_report_planet_gravity.md", "tester_report_speed_formulas.md")
+
+
+@pytest.mark.parametrize("name", TESTER_REPORTS)
+def test_answers_testers_could_not_read_now_have_proper_maths_blocks(name):
+    seen = (Path(__file__).parent / "data" / name).read_text(encoding="utf-8")
+    assert not blocks_are_well_formed(seen)          # what the tester saw was broken...
+    converted = streamlit_math(seen)
+    assert blocks_are_well_formed(converted)          # ...and is not any more
+    assert converted.count("|---") == seen.count("|---")  # every table is still there
+    assert converted.count("$$") == seen.count("$$")      # no formula lost

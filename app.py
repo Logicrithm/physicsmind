@@ -17,6 +17,9 @@ AI_PER_VISIT = whole_number("AI_QUESTIONS_PER_VISIT", 10)
 # Each visit may send this much feedback, so a script can't flood the free feedback database.
 FEEDBACK_PER_VISIT = 40
 NOTE_CHARS = 500
+# "Hard to read" and "Too long" added in 0.4 (17 Nov 2026): a tester had to file an unreadable answer under "Other".
+ISSUE_CATEGORIES = ["No issue", "Hard to read / looks broken", "Too long", "Explanation unclear", "Incorrect formula",
+                    "Calculation error", "Missing steps", "Units error", "Other"]
 PRIVACY_NOTE = ("Questions and feedback you send are saved to improve PhysicsMind, and general questions are sent to an "
                 "outside AI service (Groq or OpenRouter) to be answered. Please don’t include your name, contact details "
                 "or anything personal.")
@@ -318,7 +321,7 @@ for index, message in enumerate(st.session_state.messages):
                     rating = st.radio("Your feedback", ["👍 Yes, helpful", "👎 Not quite"], horizontal=True, label_visibility="collapsed")
                     issue = st.selectbox(
                         "Anything we should improve?",
-                        ["No issue", "Incorrect formula", "Calculation error", "Explanation unclear", "Missing steps", "Units error", "Other"],
+                        ISSUE_CATEGORIES,
                         label_visibility="collapsed"
                     )
                     comment = st.text_input("Optional note", placeholder="What could we do better?", max_chars=NOTE_CHARS)

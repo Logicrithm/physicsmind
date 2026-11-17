@@ -73,8 +73,49 @@ def make_answer(question: str, tutor=ask_tutor, ai_allowed: bool = True) -> Answ
     if error:
         return Answer(note + UNAVAILABLE_TEXT.get(error, FAILED_TEXT), model or "Not connected", AI_UNAVAILABLE,
                       "not answered: AI tutor unavailable", used_ai=error != NOT_CONFIGURED)
-    return Answer(note + streamlit_math(answer), model or "unknown", AI_TUTOR, "LLM response; not independently verified",
+    return Answer(note + streamlit_math(tidy_text(answer)), model or "unknown", AI_TUTOR, "LLM response; not independently verified",
                   used_ai=True)
+
+
+_POWER = {"¹": "", "²": "²", "1": "", "2": "²"}
+_UNIT_PLAIN = re.compile(r"\b(km|cm|m)\s?[·⋅]?\s?(s|h)⁻([¹²])")
+_UNIT_LATEX = re.compile(r"\\(text|mathrm)\{\s*(km|cm|m)\s*(?:\\,|\\ |~|\s)?\s*(s|h)\s*\}\s*\^\s*\{\s*-\s*([12])\s*\}")
+_UNIT_LATEX_INSIDE = re.compile(r"\\(text|mathrm)\{\s*(km|cm|m)\s*(?:\\,|\\ |~|\s)?\s*(s|h)\s*\^\s*\{\s*-\s*([12])\s*\}\s*\}")
+_UNIT_SPLIT = re.compile(r"\b(km|cm|m)\s(s|h)\$\^\{-([12])\}\$")   # "m s$^{-1}$": the power alone in maths
+
+
+def _school_units(text: str) -> str:
+    text = _UNIT_PLAIN.sub(lambda m: f"{m[1]}/{m[2]}{_POWER[m[3]]}", text)
+    latex = lambda m: f"\\{m[1]}{{{m[2]}/{m[3]}}}" + ("^2" if m[4] == "2" else "")  # noqa: E731
+    text = _UNIT_LATEX.sub(latex, text)
+    text = _UNIT_LATEX_INSIDE.sub(latex, text)
+    return _UNIT_SPLIT.sub(lambda m: f"{m[1]}/{m[2]}{_POWER[m[3]]}", text)
+
+
+def tidy_text(text: str) -> str:
+    """Small writing habits of the AI that show up as stray symbols (testers' answers, 15 Nov 2026):
+    - LaTeX-style quotes: “diluted’’ and ``word'' become “diluted” and “word”;
+    - a line starting "*Word" with no closing "*" was meant as a list item, so it becomes "- Word"
+      (a line such as "*whole sentence in italics*" is left alone);
+    - a line "* $a$ is the acceleration.*" was meant as an italic note, not a list item ending in "*", so the
+      space after the first "*" goes (0.4 readability check, 17 Nov 2026);
+    - units written the university way become the school way: "m s⁻¹" → "m/s", "m s⁻²" → "m/s²", "km h⁻¹" → "km/h",
+      also in LaTeX ("\text{m s}^{-2}" → "\text{m/s}^2"). The instructions ask for this, but 5 of 10 answers in the
+      0.4 readability check still used "m s⁻¹"."""
+    text = _school_units(text)
+    text = text.replace("’’", "”").replace("``", "“")
+    text = re.sub(r"“([^”\n]{1,80}?)''", r"“\1”", text)
+    fixed = []
+    for line in text.split("\n"):
+        stripped = line.lstrip()
+        indent = line[:len(line) - len(stripped)]
+        singles = stripped.replace("**", "").count("*")
+        if re.match(r"\*[A-Za-z0-9(“\"]", stripped) and singles % 2 == 1:
+            line = indent + "- " + stripped[1:]
+        elif re.fullmatch(r"\* +(\S.*\S)\*\s*", stripped) and singles == 2:
+            line = indent + "*" + re.fullmatch(r"\* +(\S.*\S)\*\s*", stripped).group(1) + "*"
+        fixed.append(line)
+    return "\n".join(fixed)
 
 
 def streamlit_math(text: str) -> str:

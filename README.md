@@ -73,6 +73,8 @@ python -m pytest -q
   maximum height, time to the top, time of flight and range. Throws downward, drops, landing on a roof or table,
   and every other topic go to the AI tutor and are labelled unchecked.
 - Other numerical problems are not yet automatically parsed into solver inputs.
+- AI answers are asked to be short and plain (`physicsmind/tutor.py`), but they are not checked and vary from run to
+  run. `python -m evals.readability` measures them (it uses about 10 real AI answers, so it is run by hand).
 - Feedback is stored locally and is not automatically used to train the model.
 - The current solver is not a complete physics verification engine.
 

@@ -21,6 +21,8 @@ ABOUT = """
 
 - Concepts, other topics and other kinds of problems are answered by an AI. It is usually helpful but **can be
   wrong**: its answers are labelled "not independently verified". Each visit gets 10 AI questions.
+- Its answers are kept short and in plain words. For a calculation it lists what is given, shows the steps, and
+  gives the result at the end. If one is hard to read, choose "Hard to read / looks broken" below it.
 
 **🛠️ Being worked on next**
 

@@ -335,6 +335,19 @@ def _wants_understanding(text: str) -> bool:
     return bool(EXPLAIN.search(text)) and not any(q.kind for q in quantities(text)[0])
 
 
+# Something is launched into the air. Found by a probe on 17 Nov 2026: "A car slows from 20 m/s to rest in 4 s. How far
+# does it travel while stopping?" was read as a projectile range question and asked which way the car is thrown. A time
+# of flight or range question with none of these words is about something else (often straight-line motion).
+LAUNCHED = re.compile(r"\b(?:throw\w*|threw|project\w*|launch\w*|fire[sd]?|kick\w*|hits?|struck|strikes?|shoot\w*|shot|"
+                      r"toss\w*|flung|flings?|hurl\w*|lob\w*|leaves?|left|released?|jumps?|jumped|bowl\w*|pitch\w*|served?|"
+                      r"trajector\w*|time of flight|flight time|in the air|in flight|airborne|horizontally|angle|elevation|"
+                      r"obliquely|cannon\w*|bullet|missile|arrow|rocket|cliff|ramp)\b|°|\bdeg\b|\bdegrees?\b|\brad\b")
+
+
+def _launched(text: str) -> bool:
+    return bool(LAUNCHED.search(text))
+
+
 def _show(value: float) -> str:
     """A number as a student would write it: 20, 20.41, 0.025."""
     if value == 0:
@@ -372,6 +385,9 @@ def read_question(question: str) -> Reading:
         else:
             reason = "it isn't a question about the maximum height, time of flight or range of a launched object"
         return Reading(NOT_MINE, on_topic=height_given, reasons=[reason])
+    if (T_FLIGHT in asks or RANGE in asks) and not _launched(text):
+        return Reading(NOT_MINE, on_topic=False, asks=asks,
+                       reasons=["nothing in it is thrown or launched into the air, so it is not a projectile question"])
     if other_asks:
         return Reading(NOT_MINE, on_topic=True, asks=asks,
                        reasons=[f"it also asks for {', '.join(other_asks)}, and the checked solver only answers the maximum "
